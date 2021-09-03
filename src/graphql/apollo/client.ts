@@ -16,7 +16,8 @@ const wsLink = process.browser
   ? new WebSocketLink({
       uri: "ws://localhost:8000/subscriptions",
       options: {
-        reconnect: true,
+        // 再接続
+        reconnect: false,
       },
     })
   : undefined;

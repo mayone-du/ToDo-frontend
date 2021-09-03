@@ -23,3 +23,5 @@
   GOOGLE_CLIENT_SECRET
 - npm build
 - npm start
+
+GCP のコンソールから色々設定を済ます。リダイレクト URL は http://localhost:3000/api/auth/callback/google
