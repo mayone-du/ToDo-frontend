@@ -28,6 +28,7 @@ const authLink = setContext((operation, { headers }) => {
 
 // ApolloClientの作成
 const createApolloClient = (idToken: string | undefined /* 引数でidTokenを受け取る */) => {
+  console.log("client:", idToken);
   // 画像をアップロードするためにcreateUploadLinkを使う
   const newHttpLink = createUploadLink({
     uri: GRAPHQL_API_ENDPOINT,
@@ -43,6 +44,7 @@ const createApolloClient = (idToken: string | undefined /* 引数でidTokenを�
       return definition.kind === "OperationDefinition" && definition.operation === "subscription";
     },
     wsLink ? wsLink : authLink.concat(newHttpLink),
+    // wsLink as WebSocketLink,
     authLink.concat(newHttpLink),
   );
   return new ApolloClient({
@@ -58,7 +60,7 @@ export const initializeApollo = (_initialState = null, idToken: string | undefin
   // SSR時は新しいclientを作成
   if (typeof window === "undefined") return _apolloClient;
   // CSR時は同じクライアントを使い回す
-  if (!apolloClient) apolloClient = _apolloClient;
+  // if (!apolloClient) apolloClient = _apolloClient;
 
   return _apolloClient;
 };

@@ -18,6 +18,8 @@ nprogress.configure({ showSpinner: false, speed: 400, minimum: 0.25 });
 const App = (props: CustomAppProps) => {
   // MainLayoutでセットされた値を取得し、ApolloClientへ渡す
   const userInfo = useReactiveVar(userInfoVar);
+  console.log("_app:", userInfo);
+
   const apolloClient = initializeApollo(null, userInfo.idToken);
 
   if (process.browser) {
@@ -25,7 +27,7 @@ const App = (props: CustomAppProps) => {
   }
   useEffect(() => {
     nprogress.done();
-  }, []);
+  });
 
   // レイアウトを取得
   const getLayout =

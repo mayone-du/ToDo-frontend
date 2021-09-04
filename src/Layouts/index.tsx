@@ -17,6 +17,8 @@ export const Layout = (page: NextPage) => {
       (async () => {
         const session = await getSession();
         const idToken = session?.idToken as string;
+        console.log("layout:", idToken);
+
         userInfoVar({
           idToken: idToken,
         });

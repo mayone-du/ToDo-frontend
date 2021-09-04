@@ -1,0 +1,13 @@
+query GetMyAllTasks {
+  myAllTasks {
+    edges {
+      node {
+        id
+        title
+        content
+        isDone
+        createdAt
+      }
+    }
+  }
+}

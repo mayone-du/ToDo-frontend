@@ -42,20 +42,20 @@ export type CreateTaskMutationPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createTask?: Maybe<CreateTaskMutationPayload>;
   /** Social Auth Mutation */
   socialAuth?: Maybe<SocialAuth>;
-};
-
-
-export type MutationCreateTaskArgs = {
-  input: CreateTaskMutationInput;
+  createTask?: Maybe<CreateTaskMutationPayload>;
 };
 
 
 export type MutationSocialAuthArgs = {
   accessToken: Scalars['String'];
   provider: Scalars['String'];
+};
+
+
+export type MutationCreateTaskArgs = {
+  input: CreateTaskMutationInput;
 };
 
 /** An object with an ID */
@@ -81,7 +81,8 @@ export type Query = {
   __typename?: 'Query';
   user?: Maybe<UserNode>;
   allUsers?: Maybe<UserNodeConnection>;
-  todo?: Maybe<TaskNode>;
+  task?: Maybe<TaskNode>;
+  myAllTasks?: Maybe<TaskNodeConnection>;
 };
 
 
@@ -104,8 +105,19 @@ export type QueryAllUsersArgs = {
 };
 
 
-export type QueryTodoArgs = {
+export type QueryTaskArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryMyAllTasksArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  title_Icontains?: Maybe<Scalars['String']>;
 };
 
 /** Social Auth Mutation */
@@ -175,6 +187,23 @@ export type TaskNode = Node & {
   taskImage?: Maybe<Scalars['String']>;
   isDone: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
+};
+
+export type TaskNodeConnection = {
+  __typename?: 'TaskNodeConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<TaskNodeEdge>>;
+};
+
+/** A Relay edge containing a `TaskNode` and its cursor. */
+export type TaskNodeEdge = {
+  __typename?: 'TaskNodeEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<TaskNode>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
 };
 
 
@@ -263,6 +292,33 @@ export type GetAllUsersQuery = (
   )> }
 );
 
+export type GetMyAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyAllTasksQuery = (
+  { __typename?: 'Query' }
+  & { myAllTasks?: Maybe<(
+    { __typename?: 'TaskNodeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'TaskNodeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'TaskNode' }
+        & Pick<TaskNode, 'id' | 'title' | 'content' | 'isDone' | 'createdAt'>
+      )> }
+    )>> }
+  )> }
+);
+
+export type CountSecondsSubscriptionVariables = Exact<{
+  seconds: Scalars['Int'];
+}>;
+
+
+export type CountSecondsSubscription = (
+  { __typename?: 'Subscription' }
+  & Pick<Subscription, 'countSeconds'>
+);
+
 
 export const SocialAuthDocument = gql`
     mutation SocialAuth($accessToken: String!) {
@@ -349,3 +405,73 @@ export function useGetAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>;
 export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>;
 export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>;
+export const GetMyAllTasksDocument = gql`
+    query GetMyAllTasks {
+  myAllTasks {
+    edges {
+      node {
+        id
+        title
+        content
+        isDone
+        createdAt
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMyAllTasksQuery__
+ *
+ * To run a query within a React component, call `useGetMyAllTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyAllTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyAllTasksQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyAllTasksQuery(baseOptions?: Apollo.QueryHookOptions<GetMyAllTasksQuery, GetMyAllTasksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyAllTasksQuery, GetMyAllTasksQueryVariables>(GetMyAllTasksDocument, options);
+      }
+export function useGetMyAllTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyAllTasksQuery, GetMyAllTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyAllTasksQuery, GetMyAllTasksQueryVariables>(GetMyAllTasksDocument, options);
+        }
+export type GetMyAllTasksQueryHookResult = ReturnType<typeof useGetMyAllTasksQuery>;
+export type GetMyAllTasksLazyQueryHookResult = ReturnType<typeof useGetMyAllTasksLazyQuery>;
+export type GetMyAllTasksQueryResult = Apollo.QueryResult<GetMyAllTasksQuery, GetMyAllTasksQueryVariables>;
+export const CountSecondsDocument = gql`
+    subscription CountSeconds($seconds: Int!) {
+  countSeconds(upTo: $seconds)
+}
+    `;
+
+/**
+ * __useCountSecondsSubscription__
+ *
+ * To run a query within a React component, call `useCountSecondsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useCountSecondsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCountSecondsSubscription({
+ *   variables: {
+ *      seconds: // value for 'seconds'
+ *   },
+ * });
+ */
+export function useCountSecondsSubscription(baseOptions: Apollo.SubscriptionHookOptions<CountSecondsSubscription, CountSecondsSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<CountSecondsSubscription, CountSecondsSubscriptionVariables>(CountSecondsDocument, options);
+      }
+export type CountSecondsSubscriptionHookResult = ReturnType<typeof useCountSecondsSubscription>;
+export type CountSecondsSubscriptionResult = Apollo.SubscriptionResult<CountSecondsSubscription>;
