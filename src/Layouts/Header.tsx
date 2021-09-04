@@ -33,7 +33,7 @@ export const Header: React.VFC = memo(() => {
       <nav className="flex justify-between items-center">
         <div className="m-2">
           <Link href="/">
-            <a>logo</a>
+            <a className="block text-lg font-bold">LOGO</a>
           </Link>
         </div>
         <ul className="flex items-center">
@@ -57,7 +57,7 @@ export const Header: React.VFC = memo(() => {
                     return (
                       <div>
                         <Popover.Button
-                          className={`ring-blue-300 overflow-hidden rounded-full h-10 w-10 block active:ring ${
+                          className={`ring-blue-300 overflow-hidden rounded-full h-10 w-10 block active:ring hover:shadow-lg ${
                             isOpen && "ring"
                           }`}
                         >

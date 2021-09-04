@@ -77,14 +77,17 @@ export default NextAuth({
     async signIn(_user, account, _profile) {
       // 初回サインイン時にDBにユーザーを登録し、二回目以降はユーザーが存在すればOKにする
       const apolloClient = initializeApollo(null, account.idToken);
-      const { errors } = await apolloClient.mutate<SocialAuthMutation, SocialAuthMutationVariables>(
-        {
-          mutation: SocialAuthDocument,
-          variables: {
-            accessToken: account.accessToken,
-          },
+
+      const { data, errors } = await apolloClient.mutate<
+        SocialAuthMutation,
+        SocialAuthMutationVariables
+      >({
+        mutation: SocialAuthDocument,
+        variables: {
+          accessToken: account.accessToken,
         },
-      );
+      });
+
       // SocialAuthのエラーが無ければOK
       if (errors) {
         console.error(errors);

@@ -19,13 +19,37 @@ export type Scalars = {
    */
   DateTime: any;
   SocialCamelJSON: any;
+  /**
+   * Create scalar that ignores normal serialization/deserialization, since
+   * that will be handled by the multipart request spec
+   */
+  Upload: any;
+};
+
+export type CreateTaskMutationInput = {
+  title: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  taskImage?: Maybe<Scalars['Upload']>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type CreateTaskMutationPayload = {
+  __typename?: 'CreateTaskMutationPayload';
+  task?: Maybe<TaskNode>;
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createTask?: Maybe<CreateTaskMutationPayload>;
   /** Social Auth Mutation */
   socialAuth?: Maybe<SocialAuth>;
+};
+
+
+export type MutationCreateTaskArgs = {
+  input: CreateTaskMutationInput;
 };
 
 
@@ -57,6 +81,7 @@ export type Query = {
   __typename?: 'Query';
   user?: Maybe<UserNode>;
   allUsers?: Maybe<UserNodeConnection>;
+  todo?: Maybe<TaskNode>;
 };
 
 
@@ -76,6 +101,11 @@ export type QueryAllUsersArgs = {
   email?: Maybe<Scalars['String']>;
   email_Icontains?: Maybe<Scalars['String']>;
   isStaff?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QueryTodoArgs = {
+  id: Scalars['ID'];
 };
 
 /** Social Auth Mutation */
@@ -125,6 +155,29 @@ export type SocialType = {
   modified: Scalars['DateTime'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  countSeconds?: Maybe<Scalars['Float']>;
+};
+
+
+export type SubscriptionCountSecondsArgs = {
+  upTo?: Maybe<Scalars['Int']>;
+};
+
+export type TaskNode = Node & {
+  __typename?: 'TaskNode';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  createUser: UserNode;
+  title: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  taskImage?: Maybe<Scalars['String']>;
+  isDone: Scalars['Boolean'];
+  createdAt: Scalars['DateTime'];
+};
+
+
 export type UserNode = Node & {
   __typename?: 'UserNode';
   /** The ID of the object. */
@@ -139,6 +192,7 @@ export type UserNode = Node & {
   isStaff: Scalars['Boolean'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
+  createUser?: Maybe<TaskNode>;
   socialAuth: SocialNodeConnection;
 };
 
@@ -192,6 +246,23 @@ export type SocialAuthMutation = (
   )> }
 );
 
+export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllUsersQuery = (
+  { __typename?: 'Query' }
+  & { allUsers?: Maybe<(
+    { __typename?: 'UserNodeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'UserNodeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'UserNode' }
+        & Pick<UserNode, 'id' | 'email' | 'username'>
+      )> }
+    )>> }
+  )> }
+);
+
 
 export const SocialAuthDocument = gql`
     mutation SocialAuth($accessToken: String!) {
@@ -238,3 +309,43 @@ export function useSocialAuthMutation(baseOptions?: Apollo.MutationHookOptions<S
 export type SocialAuthMutationHookResult = ReturnType<typeof useSocialAuthMutation>;
 export type SocialAuthMutationResult = Apollo.MutationResult<SocialAuthMutation>;
 export type SocialAuthMutationOptions = Apollo.BaseMutationOptions<SocialAuthMutation, SocialAuthMutationVariables>;
+export const GetAllUsersDocument = gql`
+    query GetAllUsers {
+  allUsers {
+    edges {
+      node {
+        id
+        email
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllUsersQuery__
+ *
+ * To run a query within a React component, call `useGetAllUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, options);
+      }
+export function useGetAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, options);
+        }
+export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>;
+export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>;
+export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>;
