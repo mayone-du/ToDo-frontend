@@ -4,3 +4,9 @@ export const cache = new InMemoryCache();
 
 // ユーザー情報をReactive Variablesで管理しようと思ったけど、基本情報はNextAuth.jsのuseSessionで取得できる
 export const idTokenVar = makeVar("");
+
+const InitialUserInfo = {
+  isLogin: false,
+  isLoading: true,
+};
+export const userInfoVar = makeVar(InitialUserInfo);

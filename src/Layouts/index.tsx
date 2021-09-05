@@ -2,7 +2,7 @@ import { useReactiveVar } from "@apollo/client";
 import type { NextPage } from "next";
 import { getSession } from "next-auth/client";
 import { useEffect } from "react";
-import { idTokenVar } from "src/graphql/apollo/cache";
+import { idTokenVar, userInfoVar } from "src/graphql/apollo/cache";
 import { Footer } from "src/layouts/Footer";
 import { Header } from "src/layouts/Header";
 import { LayoutErrorBoundary } from "src/layouts/LayoutErrorBoundary";
@@ -20,6 +20,8 @@ export const Layout = (page: NextPage) => {
         // nextauthのapiでsessionにidTokenをセットしているためstring型を強制
         const idToken = session?.idToken as string;
         idTokenVar(idToken);
+
+        userInfoVar({ isLoading: false, isLogin: session ? true : false });
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

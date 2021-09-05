@@ -4,24 +4,29 @@ import { useSession } from "next-auth/client";
 import { useEffect } from "react";
 import { Error } from "src/components/Error";
 import { NotAuth } from "src/components/NotAuth";
-import { idTokenVar } from "src/graphql/apollo/cache";
+import { idTokenVar, userInfoVar } from "src/graphql/apollo/cache";
 import { useGetMyAllTasksLazyQuery } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
+// import { useValidateAuth } from "src/libs/hooks/useValidateAuth";
 import { ListData } from "src/pages/tasks/components/ListData";
 import { ListLoading } from "src/pages/tasks/components/ListLoading";
 
 const TasksIndexPage: CustomNextPage = () => {
-  const [session, isSessionLoading] = useSession();
-  const idToken = useReactiveVar(idTokenVar);
+  const userInfo = useReactiveVar(userInfoVar);
   const [query, { data, loading: isDataLoading, error }] = useGetMyAllTasksLazyQuery();
 
   useEffect(() => {
     // ログイン済みである場合のみクエリを実行
-    session && !isSessionLoading && idToken !== "" && query();
+    userInfo.isLogin && query();
+    // session && !isSessionLoading && idToken !== "" && query();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idToken]);
+  }, [userInfo]);
 
-  // ローディング
+  if (userInfo.isLoading) {
+    return <div className="bg-red-600">Loading</div>;
+  }
+
+  // データのローディング
   if (isDataLoading) {
     return <ListLoading />;
   }
@@ -32,7 +37,8 @@ const TasksIndexPage: CustomNextPage = () => {
   }
 
   // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
-  if (!session && !isSessionLoading) {
+  // if (!session && !isSessionLoading) {
+  if (!userInfo.isLogin) {
     return <NotAuth />;
   }
 

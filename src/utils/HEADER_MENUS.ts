@@ -8,6 +8,10 @@ export const HEADER_MENUS = [
     label: "TASKS",
   },
   {
+    href: "/users",
+    label: "USERS",
+  },
+  {
     href: "/404",
     label: "404",
   },
