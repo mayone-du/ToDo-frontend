@@ -2,7 +2,7 @@ import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
 import { useSession } from "next-auth/client";
 import { useEffect } from "react";
-import { userInfoVar } from "src/graphql/apollo/cache";
+import { idTokenVar } from "src/graphql/apollo/cache";
 import { useGetMyAllTasksLazyQuery } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
 import { Data } from "src/pages/tasks/components/Data";
@@ -12,18 +12,14 @@ import { NotAuth } from "src/pages/tasks/components/NotAuth";
 
 const TasksIndexPage: CustomNextPage = () => {
   const [session, isSessionLoading] = useSession();
-  const userInfo = useReactiveVar(userInfoVar);
+  const idToken = useReactiveVar(idTokenVar);
   const [query, { data, loading: isLoading, error }] = useGetMyAllTasksLazyQuery();
 
-  // マウント時にidTokenの情報をチェックして、ある場合のみクエリを投げる
   useEffect(() => {
-    if (userInfo.idToken !== "" && session && !isSessionLoading) {
-      console.log("lazyQuery called:", userInfo);
-      query();
-    } else {
-      console.log("lazyQuery not call:", userInfo);
-    }
-  }, [userInfo]);
+    // ログイン済みである場合のみクエリを実行
+    idToken !== "" && session && !isSessionLoading && query();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idToken]);
 
   // ローディング
   if (isLoading) {
@@ -40,6 +36,7 @@ const TasksIndexPage: CustomNextPage = () => {
     return <NotAuth />;
   }
 
+  // 正常時
   return <Data {...data} />;
 };
 

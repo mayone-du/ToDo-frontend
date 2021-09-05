@@ -28,7 +28,6 @@ const authLink = setContext((operation, { headers }) => {
 
 // ApolloClientの作成
 const createApolloClient = (idToken: string | undefined /* 引数でidTokenを受け取る */) => {
-  console.log("client:", idToken);
   // 画像をアップロードするためにcreateUploadLinkを使う
   const newHttpLink = createUploadLink({
     uri: GRAPHQL_API_ENDPOINT,
