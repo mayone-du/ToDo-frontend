@@ -21,6 +21,7 @@ export const Layout = (page: NextPage) => {
         const idToken = session?.idToken as string;
         idTokenVar(idToken);
 
+        // グローバル管理しているユーザー情報を更新
         userInfoVar({ isLoading: false, isLogin: session ? true : false });
       })();
     }

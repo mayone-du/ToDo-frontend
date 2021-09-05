@@ -1,10 +1,9 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
-import { useSession } from "next-auth/client";
 import { useEffect } from "react";
 import { Error } from "src/components/Error";
 import { NotAuth } from "src/components/NotAuth";
-import { idTokenVar, userInfoVar } from "src/graphql/apollo/cache";
+import { userInfoVar } from "src/graphql/apollo/cache";
 import { useGetMyAllTasksLazyQuery } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
 // import { useValidateAuth } from "src/libs/hooks/useValidateAuth";
@@ -18,10 +17,10 @@ const TasksIndexPage: CustomNextPage = () => {
   useEffect(() => {
     // ログイン済みである場合のみクエリを実行
     userInfo.isLogin && query();
-    // session && !isSessionLoading && idToken !== "" && query();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
+  // ユーザー情報の取得中
   if (userInfo.isLoading) {
     return <div className="bg-red-600">Loading</div>;
   }
