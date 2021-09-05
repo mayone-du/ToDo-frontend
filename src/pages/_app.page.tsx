@@ -39,7 +39,17 @@ const App = (props: CustomAppProps) => {
     <Provider session={props.pageProps.session}>
       <ApolloProvider client={apolloClient}>
         <ThemeProvider attribute="class" defaultTheme="light">
-          <DefaultSeo title={"Template"} description="Template Repo" />
+          <DefaultSeo
+            title={"Template"}
+            description="Template Repo"
+            additionalMetaTags={[{ property: "", content: "" }]}
+            additionalLinkTags={[
+              {
+                rel: "manifest",
+                href: "/pwa/manifest.json",
+              },
+            ]}
+          />
           {getLayout(<props.Component {...props.pageProps} />)}
           <Toaster toastOptions={{ duration: 2500 }} />
         </ThemeProvider>

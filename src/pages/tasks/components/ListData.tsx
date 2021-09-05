@@ -11,7 +11,7 @@ export const ListData: React.VFC<GetMyAllTasksQuery | undefined> = (props) => {
             task?.node && (
               <li key={index}>
                 <Link href={`/tasks/${task.node.id}`}>
-                  <a>{task.node.title}</a>
+                  <a className="underline">{task.node.title}</a>
                 </Link>
               </li>
             )
