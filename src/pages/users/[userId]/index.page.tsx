@@ -1,6 +1,5 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage, GetStaticPaths, GetStaticProps } from "next";
-import { useSession } from "next-auth/client";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { initializeApollo } from "src/graphql/apollo/client";
 import type {
@@ -11,6 +10,7 @@ import type {
 import { GetUserDocument } from "src/graphql/schemas/schema";
 import { GetAllUsersDocument } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
+import { MyUserInfo } from "src/pages/users/components/MyUserInfo";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const apolloClient = initializeApollo(null, "");
@@ -45,17 +45,22 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 const UserIdPage: CustomNextPage<GetUserQuery | undefined> = (props) => {
-  const [session] = useSession();
   const userInfo = useReactiveVar(userInfoVar);
 
+  // ユーザー情報のローディング時
   if (userInfo.isLoading) {
     return <div className="bg-blue-500">Loading...</div>;
   }
 
+  // 自分のユーザーIDだった場合
+  if (userInfo.userId === props.user?.id) {
+    return <MyUserInfo {...props} />;
+  }
+
   return (
     <div>
-      My Account Info: {session?.user?.email}
-      <div>{props.user?.username}</div>
+      Other User:
+      {props.user?.email}
     </div>
   );
 };
