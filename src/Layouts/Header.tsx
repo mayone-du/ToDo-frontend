@@ -32,9 +32,9 @@ export const Header: React.VFC = memo(() => {
   ];
 
   return (
-    <header className="px-32">
+    <header className="md:px-60 lg:px-72">
       <nav className="flex justify-between items-center">
-        <div className="m-2">
+        <div className="my-2">
           <Link href="/">
             <a className="block text-lg font-bold">LOGO</a>
           </Link>

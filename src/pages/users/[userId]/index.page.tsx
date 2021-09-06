@@ -10,6 +10,7 @@ import type {
 import { GetUserDocument } from "src/graphql/schemas/schema";
 import { GetAllUsersDocument } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
+import { DetailData } from "src/pages/users/components/DetailData";
 import { MyUserInfo } from "src/pages/users/components/MyUserInfo";
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -57,12 +58,7 @@ const UserIdPage: CustomNextPage<GetUserQuery | undefined> = (props) => {
     return <MyUserInfo {...props} />;
   }
 
-  return (
-    <div>
-      Other User:
-      {props.user?.email}
-    </div>
-  );
+  return <DetailData {...props} />;
 };
 
 export default UserIdPage;

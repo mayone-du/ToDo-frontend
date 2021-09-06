@@ -24,17 +24,28 @@ export const Layout = (page: NextPage) => {
         const idToken = session?.idToken as string;
         idTokenVar(idToken);
 
-        // ユーザー情報を取得し、Reactive Variablesでグローバル管理
-        const apolloClient = initializeApollo(null, idToken);
-        const { data } = await apolloClient.query<GetMyUserInfoQuery, GetMyUserInfoQueryVariables>({
-          query: GetMyUserInfoDocument,
-        });
+        // session情報があればユーザー情報を取得し、Reactive Variablesでグローバル管理
+        if (session) {
+          const apolloClient = initializeApollo(null, idToken);
+          const { data } = await apolloClient.query<
+            GetMyUserInfoQuery,
+            GetMyUserInfoQueryVariables
+          >({
+            query: GetMyUserInfoDocument,
+          });
+          userInfoVar({
+            isLoading: false,
+            isLogin: true,
+            userId: data.myUserInfo?.id ?? "",
+          });
+          return;
+        }
 
         // グローバル管理しているユーザー情報を更新
         userInfoVar({
+          userId: "",
           isLoading: false,
-          isLogin: session && data.myUserInfo?.id ? true : false,
-          userId: data.myUserInfo?.id ?? "",
+          isLogin: false,
         });
       })();
     }
@@ -44,7 +55,7 @@ export const Layout = (page: NextPage) => {
   return (
     <div>
       <Header />
-      <main>
+      <main className="px-4 md:px-60 lg:px-72 mx-auto">
         <LayoutErrorBoundary>{page}</LayoutErrorBoundary>
       </main>
       <Footer />

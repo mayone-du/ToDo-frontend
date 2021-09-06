@@ -24,17 +24,13 @@ const TaskIdPage: CustomNextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
-  if (userInfo.isLoading) {
-    return <div className="bg-red-600">Loading</div>;
-  }
-
-  // ローディング
-  if (isDataLoading) {
+  // タスクのデータとユーザー情報のローディング
+  if (isDataLoading || userInfo.isLoading) {
     return <DetailLoding />;
   }
 
-  // エラー
-  if (error) {
+  // エラー（タスクの作成者が自分でない場合も含む）
+  if (error || data?.task?.createUser.id !== userInfo.userId) {
     return <Error />;
   }
 
@@ -44,7 +40,6 @@ const TaskIdPage: CustomNextPage = () => {
   }
 
   // 正常時
-
   return <DetailData {...data} />;
 };
 
