@@ -1,11 +1,14 @@
+import { useReactiveVar } from "@apollo/client";
 import { Popover } from "@headlessui/react";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/client";
 import { memo, useCallback } from "react";
+import { userInfoVar } from "src/graphql/apollo/cache";
 import { HEADER_MENUS } from "src/utils/HEADER_MENUS";
 
 export const Header: React.VFC = memo(() => {
-  const [session, isLoading] = useSession();
+  const [session] = useSession();
+  const userInfo = useReactiveVar(userInfoVar);
   const handleSignIn = useCallback(() => {
     signIn();
   }, []);
@@ -47,10 +50,14 @@ export const Header: React.VFC = memo(() => {
               </li>
             );
           })}
+          {/* ローディング時の場合 */}
+          {userInfo.isLoading && (
+            <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>
+          )}
           <li className="m-2">
             {/* ログイン状態によって変更 */}
             {/* ログイン時の場合 */}
-            {session && (
+            {!userInfo.isLoading && userInfo.isLogin && (
               <div className="top-16 px-4 w-full max-w-sm">
                 <Popover className="relative">
                   {({ open: isOpen }) => {
@@ -61,7 +68,7 @@ export const Header: React.VFC = memo(() => {
                             isOpen && "ring"
                           }`}
                         >
-                          {session.user?.image ? (
+                          {session?.user?.image ? (
                             <img src={session.user.image} alt="" />
                           ) : (
                             <div>No Image</div>
@@ -71,7 +78,7 @@ export const Header: React.VFC = memo(() => {
                           <ul>
                             {/* プロフィールのリンク */}
                             <li>
-                              <Link href="/">
+                              <Link href={`/users/${userInfo.userId}`}>
                                 <a className="block py-2 px-4 hover:bg-gray-200 transition-colors duration-300">
                                   profile <br />
                                   @hoge
@@ -108,13 +115,11 @@ export const Header: React.VFC = memo(() => {
               </div>
             )}
             {/* 非ログイン時の場合 */}
-            {session === null && (
+            {!userInfo.isLoading && !userInfo.isLogin && (
               <button onClick={handleSignIn} className="block p-2 border">
                 SignIn
               </button>
             )}
-            {/* ローディング時の場合 */}
-            {isLoading && <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>}
           </li>
         </ul>
       </nav>
