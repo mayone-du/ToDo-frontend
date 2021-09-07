@@ -22,10 +22,6 @@ export const Header: React.VFC = memo(() => {
       href: "##",
     },
     {
-      label: "Automations",
-      href: "##",
-    },
-    {
       label: "Reports",
       href: "##",
     },
@@ -58,7 +54,7 @@ export const Header: React.VFC = memo(() => {
             {/* ログイン状態によって変更 */}
             {/* ログイン時の場合 */}
             {!userInfo.isLoading && userInfo.isLogin && (
-              <div className="top-16 px-4 w-full max-w-sm">
+              <div className="top-16 mx-auto w-full">
                 <Popover className="relative">
                   {({ open: isOpen }) => {
                     return (
@@ -74,26 +70,31 @@ export const Header: React.VFC = memo(() => {
                             <div>No Image</div>
                           )}
                         </Popover.Button>
-                        <Popover.Panel className="absolute -right-6 z-10 mt-4 w-72 rounded border shadow-md transform">
+                        <Popover.Panel className="absolute -right-2 z-10 mt-4 w-72 bg-white dark:bg-black rounded border shadow-md transform">
                           <ul>
                             {/* プロフィールのリンク */}
                             <li>
-                              <Link href={`/users/${userInfo.userId}`}>
-                                <a className="block py-2 px-4 hover:bg-gray-200 transition-colors duration-300">
-                                  profile <br />
-                                  @hoge
-                                </a>
-                              </Link>
+                              {/* ↓押した時にメニューを閉じたいためボタンにする */}
+                              <Popover.Button className="block w-full text-left">
+                                <Link href={`/users/${userInfo.userId}`}>
+                                  <a className="block py-2 px-4 hover:bg-gray-200 transition-colors duration-300">
+                                    profile <br />
+                                    @hoge
+                                  </a>
+                                </Link>
+                              </Popover.Button>
                             </li>
                             {/* メニューを表示 */}
                             {menu_items.map((item, index) => {
                               return (
                                 <li key={index}>
-                                  <Link href={item.href}>
-                                    <a className="block py-2 px-4 hover:bg-gray-200 border-t transition-colors duration-300">
-                                      {item.label}
-                                    </a>
-                                  </Link>
+                                  <Popover.Button className="block w-full text-left">
+                                    <Link href={item.href}>
+                                      <a className="block py-2 px-4 hover:bg-gray-200 border-t transition-colors duration-300">
+                                        {item.label}
+                                      </a>
+                                    </Link>
+                                  </Popover.Button>
                                 </li>
                               );
                             })}
@@ -103,7 +104,7 @@ export const Header: React.VFC = memo(() => {
                                 onClick={handleSignOut}
                                 className="block py-2 px-4 w-full text-left hover:bg-gray-200 border-t transition-colors duration-300"
                               >
-                                SignOut
+                                サインアウト
                               </button>
                             </li>
                           </ul>

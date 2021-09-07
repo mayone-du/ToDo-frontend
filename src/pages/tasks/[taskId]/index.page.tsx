@@ -29,15 +29,20 @@ const TaskIdPage: CustomNextPage = () => {
     return <DetailLoding />;
   }
 
-  // エラー（タスクの作成者が自分でない場合も含む）
-  if (error || data?.task?.createUser.id !== userInfo.userId) {
-    console.error(error);
-    return <Error errorMessage={error?.message ?? "タスクが存在しません。"} />;
-  }
-
   // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
   if (!userInfo.isLogin) {
     return <NotAuth />;
+  }
+
+  // エラー
+  if (error) {
+    console.error(error);
+    return <Error errorMessage={error?.message} />;
+  }
+
+  // タスクの作成者が自分でない場合 初期値にundefinedが入ってくるため防止
+  if (data?.task?.createUser.id && data.task.createUser.id !== userInfo.userId) {
+    return <Error errorMessage="自分のタスクではありません。" />;
   }
 
   // 正常時

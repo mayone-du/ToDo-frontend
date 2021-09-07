@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import { useCreateTaskMutation } from "src/graphql/schemas/schema";
+import { GetMyAllTasksDocument, useCreateTaskMutation } from "src/graphql/schemas/schema";
 
 export const CreateForm: React.VFC = () => {
   const [createTaskMutation] = useCreateTaskMutation();
@@ -10,22 +10,27 @@ export const CreateForm: React.VFC = () => {
     setTaskTitle(e.target.value);
   }, []);
 
+  // タスクの作成用関数
   const handleCreateTask = (e: React.ChangeEvent<HTMLFormElement>) => {
     // formの送信を無効化
     e.preventDefault();
     // 非同期即時関数内でタスク作成のmutationを実行
     (async () => {
       try {
+        // タスクを作成したらタスクの一覧を再取得
         const { errors } = await createTaskMutation({
           variables: {
             title: taskTitle,
           },
+          refetchQueries: [GetMyAllTasksDocument],
         });
+
         // エラーがあれば例外処理を発生
         if (errors) {
           throw errors;
         }
         toast.success("送信");
+        setTaskTitle("");
       } catch (error) {
         console.error(error);
         toast.error("失敗");
