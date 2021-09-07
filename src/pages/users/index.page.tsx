@@ -16,6 +16,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: data };
 };
 
+// ユーザー一覧ページ ログイン不要
 const UsersIndexPage: CustomNextPage<GetAllUsersQuery | undefined> = (props) => {
   const userInfo = useReactiveVar(userInfoVar);
 

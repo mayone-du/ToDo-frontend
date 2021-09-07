@@ -5,7 +5,7 @@ import { CreateForm } from "src/pages/tasks/components/CreateForm";
 export const ListData: React.VFC<GetMyAllTasksQuery | undefined> = (props) => {
   return (
     <div>
-      <h3 className="py-4 text-center">Data</h3>
+      <h3 className="py-4 text-center">自分のタスク一覧</h3>
       {props?.myAllTasks?.edges.length === 0 && <p>タスクはまだありません。</p>}
       <ul className="px-6 list-disc">
         {props?.myAllTasks?.edges.map((task, index) => {

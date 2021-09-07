@@ -14,6 +14,16 @@ export const CreateForm: React.VFC = () => {
   const handleCreateTask = (e: React.ChangeEvent<HTMLFormElement>) => {
     // formの送信を無効化
     e.preventDefault();
+
+    // タスク作成時のバリデーション
+    if (taskTitle === "") {
+      toast.error("タイトルを入力して下さい。");
+      return;
+    } else if (taskTitle.length >= 20) {
+      toast.error(`20文字以内で入力してください。現在の文字数 ${taskTitle.length}`);
+      return;
+    }
+
     // 非同期即時関数内でタスク作成のmutationを実行
     (async () => {
       try {

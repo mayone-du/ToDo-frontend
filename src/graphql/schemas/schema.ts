@@ -40,11 +40,23 @@ export type CreateTaskMutationPayload = {
 };
 
 
+export type DeleteTaskMutationInput = {
+  id: Scalars['ID'];
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type DeleteTaskMutationPayload = {
+  __typename?: 'DeleteTaskMutationPayload';
+  task?: Maybe<TaskNode>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Social Auth Mutation */
   socialAuth?: Maybe<SocialAuth>;
   createTask?: Maybe<CreateTaskMutationPayload>;
+  deleteTask?: Maybe<DeleteTaskMutationPayload>;
 };
 
 
@@ -56,6 +68,11 @@ export type MutationSocialAuthArgs = {
 
 export type MutationCreateTaskArgs = {
   input: CreateTaskMutationInput;
+};
+
+
+export type MutationDeleteTaskArgs = {
+  input: DeleteTaskMutationInput;
 };
 
 /** An object with an ID */
@@ -222,8 +239,19 @@ export type UserNode = Node & {
   isStaff: Scalars['Boolean'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
-  createUser?: Maybe<TaskNode>;
+  createUser: TaskNodeConnection;
   socialAuth: SocialNodeConnection;
+};
+
+
+export type UserNodeCreateUserArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  title_Icontains?: Maybe<Scalars['String']>;
 };
 
 
@@ -256,6 +284,26 @@ export type UserNodeEdge = {
   cursor: Scalars['String'];
 };
 
+export type SocialAuthMutationVariables = Exact<{
+  accessToken: Scalars['String'];
+}>;
+
+
+export type SocialAuthMutation = (
+  { __typename?: 'Mutation' }
+  & { socialAuth?: Maybe<(
+    { __typename?: 'SocialAuth' }
+    & { social?: Maybe<(
+      { __typename?: 'SocialType' }
+      & Pick<SocialType, 'id' | 'provider' | 'uid' | 'extraData' | 'created' | 'modified'>
+      & { user: (
+        { __typename?: 'UserNode' }
+        & Pick<UserNode, 'id' | 'email' | 'isActive'>
+      ) }
+    )> }
+  )> }
+);
+
 export type CreateTaskMutationVariables = Exact<{
   title: Scalars['String'];
   content?: Maybe<Scalars['String']>;
@@ -274,22 +322,18 @@ export type CreateTaskMutation = (
   )> }
 );
 
-export type SocialAuthMutationVariables = Exact<{
-  accessToken: Scalars['String'];
+export type DeleteTaskMutationVariables = Exact<{
+  id: Scalars['ID'];
 }>;
 
 
-export type SocialAuthMutation = (
+export type DeleteTaskMutation = (
   { __typename?: 'Mutation' }
-  & { socialAuth?: Maybe<(
-    { __typename?: 'SocialAuth' }
-    & { social?: Maybe<(
-      { __typename?: 'SocialType' }
-      & Pick<SocialType, 'id' | 'provider' | 'uid' | 'extraData' | 'created' | 'modified'>
-      & { user: (
-        { __typename?: 'UserNode' }
-        & Pick<UserNode, 'id' | 'email' | 'isActive'>
-      ) }
+  & { deleteTask?: Maybe<(
+    { __typename?: 'DeleteTaskMutationPayload' }
+    & { task?: Maybe<(
+      { __typename?: 'TaskNode' }
+      & Pick<TaskNode, 'id'>
     )> }
   )> }
 );
@@ -380,45 +424,6 @@ export type CountSecondsSubscription = (
 );
 
 
-export const CreateTaskDocument = gql`
-    mutation CreateTask($title: String!, $content: String, $taskImage: Upload) {
-  createTask(input: {title: $title, content: $content, taskImage: $taskImage}) {
-    task {
-      id
-      title
-      content
-    }
-  }
-}
-    `;
-export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
-
-/**
- * __useCreateTaskMutation__
- *
- * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
- *   variables: {
- *      title: // value for 'title'
- *      content: // value for 'content'
- *      taskImage: // value for 'taskImage'
- *   },
- * });
- */
-export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
-      }
-export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
-export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
-export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
 export const SocialAuthDocument = gql`
     mutation SocialAuth($accessToken: String!) {
   socialAuth(provider: "google-oauth2", accessToken: $accessToken) {
@@ -464,6 +469,80 @@ export function useSocialAuthMutation(baseOptions?: Apollo.MutationHookOptions<S
 export type SocialAuthMutationHookResult = ReturnType<typeof useSocialAuthMutation>;
 export type SocialAuthMutationResult = Apollo.MutationResult<SocialAuthMutation>;
 export type SocialAuthMutationOptions = Apollo.BaseMutationOptions<SocialAuthMutation, SocialAuthMutationVariables>;
+export const CreateTaskDocument = gql`
+    mutation CreateTask($title: String!, $content: String, $taskImage: Upload) {
+  createTask(input: {title: $title, content: $content, taskImage: $taskImage}) {
+    task {
+      id
+      title
+      content
+    }
+  }
+}
+    `;
+export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
+
+/**
+ * __useCreateTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      taskImage: // value for 'taskImage'
+ *   },
+ * });
+ */
+export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
+      }
+export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
+export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
+export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const DeleteTaskDocument = gql`
+    mutation DeleteTask($id: ID!) {
+  deleteTask(input: {id: $id}) {
+    task {
+      id
+    }
+  }
+}
+    `;
+export type DeleteTaskMutationFn = Apollo.MutationFunction<DeleteTaskMutation, DeleteTaskMutationVariables>;
+
+/**
+ * __useDeleteTaskMutation__
+ *
+ * To run a mutation, you first call `useDeleteTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTaskMutation, { data, loading, error }] = useDeleteTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTaskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTaskMutation, DeleteTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTaskMutation, DeleteTaskMutationVariables>(DeleteTaskDocument, options);
+      }
+export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutation>;
+export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
+export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
 export const GetMyAllTasksDocument = gql`
     query GetMyAllTasks {
   myAllTasks {

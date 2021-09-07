@@ -17,7 +17,9 @@ const TaskIdPage: CustomNextPage = () => {
   const taskId = useRouter().asPath.replace("/tasks/", "");
   const userInfo = useReactiveVar(userInfoVar);
 
-  const [query, { data, loading: isDataLoading, error }] = useGetTaskLazyQuery();
+  const [query, { data, loading: isDataLoading, error }] = useGetTaskLazyQuery({
+    fetchPolicy: "network-only",
+  });
 
   useEffect(() => {
     userInfo.isLogin && query({ variables: { id: taskId } });
@@ -30,7 +32,7 @@ const TaskIdPage: CustomNextPage = () => {
   }
 
   // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
-  if (!userInfo.isLogin) {
+  if (!userInfo.isLoading && !userInfo.isLogin) {
     return <NotAuth />;
   }
 

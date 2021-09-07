@@ -9,6 +9,4 @@ export const useAuthLoading = () => {
   if (userInfo.isLoading) {
     return <div className="py-8 text-8xl text-center bg-red-600">ユーザー情報を取得中です</div>;
   }
-
-  return { userInfo };
 };

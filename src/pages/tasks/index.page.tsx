@@ -12,7 +12,9 @@ import { ListLoading } from "src/pages/tasks/components/ListLoading";
 
 const TasksIndexPage: CustomNextPage = () => {
   const userInfo = useReactiveVar(userInfoVar);
-  const [query, { data, loading: isDataLoading, error }] = useGetMyAllTasksLazyQuery();
+  const [query, { data, loading: isDataLoading, error }] = useGetMyAllTasksLazyQuery({
+    fetchPolicy: "network-only",
+  });
 
   useEffect(() => {
     // ログイン済みである場合のみクエリを実行
@@ -36,8 +38,7 @@ const TasksIndexPage: CustomNextPage = () => {
   }
 
   // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
-  // if (!session && !isSessionLoading) {
-  if (!userInfo.isLogin) {
+  if (!userInfo.isLoading && !userInfo.isLogin) {
     return <NotAuth />;
   }
 
