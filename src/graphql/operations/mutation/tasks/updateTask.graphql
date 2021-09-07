@@ -1,0 +1,15 @@
+mutation UpdateTask(
+  $id: ID!
+  $title: String
+  $content: String
+  $isDone: Boolean
+  $taskImage: Upload
+) {
+  updateTask(
+    input: { id: $id, title: $title, content: $content, isDone: $isDone, taskImage: $taskImage }
+  ) {
+    task {
+      id
+    }
+  }
+}

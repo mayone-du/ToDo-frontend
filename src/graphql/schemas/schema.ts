@@ -56,6 +56,7 @@ export type Mutation = {
   /** Social Auth Mutation */
   socialAuth?: Maybe<SocialAuth>;
   createTask?: Maybe<CreateTaskMutationPayload>;
+  updateTask?: Maybe<UpdateTaskMutationPayload>;
   deleteTask?: Maybe<DeleteTaskMutationPayload>;
 };
 
@@ -68,6 +69,11 @@ export type MutationSocialAuthArgs = {
 
 export type MutationCreateTaskArgs = {
   input: CreateTaskMutationInput;
+};
+
+
+export type MutationUpdateTaskArgs = {
+  input: UpdateTaskMutationInput;
 };
 
 
@@ -224,6 +230,21 @@ export type TaskNodeEdge = {
   cursor: Scalars['String'];
 };
 
+export type UpdateTaskMutationInput = {
+  id: Scalars['ID'];
+  title?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  isDone?: Maybe<Scalars['Boolean']>;
+  taskImage?: Maybe<Scalars['Upload']>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type UpdateTaskMutationPayload = {
+  __typename?: 'UpdateTaskMutationPayload';
+  task?: Maybe<TaskNode>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
 
 export type UserNode = Node & {
   __typename?: 'UserNode';
@@ -331,6 +352,26 @@ export type DeleteTaskMutation = (
   { __typename?: 'Mutation' }
   & { deleteTask?: Maybe<(
     { __typename?: 'DeleteTaskMutationPayload' }
+    & { task?: Maybe<(
+      { __typename?: 'TaskNode' }
+      & Pick<TaskNode, 'id'>
+    )> }
+  )> }
+);
+
+export type UpdateTaskMutationVariables = Exact<{
+  id: Scalars['ID'];
+  title?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  isDone?: Maybe<Scalars['Boolean']>;
+  taskImage?: Maybe<Scalars['Upload']>;
+}>;
+
+
+export type UpdateTaskMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTask?: Maybe<(
+    { __typename?: 'UpdateTaskMutationPayload' }
     & { task?: Maybe<(
       { __typename?: 'TaskNode' }
       & Pick<TaskNode, 'id'>
@@ -543,6 +584,47 @@ export function useDeleteTaskMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutation>;
 export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
 export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
+export const UpdateTaskDocument = gql`
+    mutation UpdateTask($id: ID!, $title: String, $content: String, $isDone: Boolean, $taskImage: Upload) {
+  updateTask(
+    input: {id: $id, title: $title, content: $content, isDone: $isDone, taskImage: $taskImage}
+  ) {
+    task {
+      id
+    }
+  }
+}
+    `;
+export type UpdateTaskMutationFn = Apollo.MutationFunction<UpdateTaskMutation, UpdateTaskMutationVariables>;
+
+/**
+ * __useUpdateTaskMutation__
+ *
+ * To run a mutation, you first call `useUpdateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTaskMutation, { data, loading, error }] = useUpdateTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      isDone: // value for 'isDone'
+ *      taskImage: // value for 'taskImage'
+ *   },
+ * });
+ */
+export function useUpdateTaskMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTaskMutation, UpdateTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTaskMutation, UpdateTaskMutationVariables>(UpdateTaskDocument, options);
+      }
+export type UpdateTaskMutationHookResult = ReturnType<typeof useUpdateTaskMutation>;
+export type UpdateTaskMutationResult = Apollo.MutationResult<UpdateTaskMutation>;
+export type UpdateTaskMutationOptions = Apollo.BaseMutationOptions<UpdateTaskMutation, UpdateTaskMutationVariables>;
 export const GetMyAllTasksDocument = gql`
     query GetMyAllTasks {
   myAllTasks {

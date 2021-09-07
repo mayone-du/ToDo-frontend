@@ -2,6 +2,7 @@ import router from "next/router";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { useDeleteTaskMutation } from "src/graphql/schemas/schema";
+import { UpdateForm } from "src/pages/tasks/components/UpdateForm";
 
 export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
   const [deleteTaskMutation, { loading: isLoading }] = useDeleteTaskMutation();
@@ -36,6 +37,7 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
       >
         削除
       </button>
+      <UpdateForm {...props} />
     </div>
   );
 };
