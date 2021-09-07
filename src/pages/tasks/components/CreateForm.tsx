@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { GetMyAllTasksDocument, useCreateTaskMutation } from "src/graphql/schemas/schema";
 
 export const CreateForm: React.VFC = () => {
-  const [createTaskMutation] = useCreateTaskMutation();
+  const [createTaskMutation, { loading: isLoading }] = useCreateTaskMutation();
   const [taskTitle, setTaskTitle] = useState("");
 
   const handleChangeTaskTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +56,12 @@ export const CreateForm: React.VFC = () => {
         onChange={handleChangeTaskTitle}
         value={taskTitle}
       />
-      <button type="submit" className="p-2 rounded border">
+      {/* mutationのローディング中は無効化する */}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="p-2 disabled:bg-gray-500 rounded border"
+      >
         作成
       </button>
     </form>
