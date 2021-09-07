@@ -1,5 +1,7 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
+import { useCallback } from "react";
+import toast from "react-hot-toast";
 import { ThemeChanger } from "src/components/ThemeChanger";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { useCountSecondsSubscription, useGetAllUsersQuery } from "src/graphql/schemas/schema";
@@ -18,6 +20,10 @@ const IndexPage: CustomNextPage = () => {
   });
 
   const { data: hoge } = useGetAllUsersQuery();
+
+  const handleClick = useCallback(() => {
+    toast.success("ボタンがクリックされました。");
+  }, []);
 
   // ユーザー情報のローディング
   if (userInfo.isLoading) {
@@ -43,12 +49,7 @@ const IndexPage: CustomNextPage = () => {
           return <li key={index}>{user?.node?.email}</li>;
         })}
       </ul>
-      <button
-        className="block p-4 mx-auto rounded-md border"
-        // onClick={() => {
-        //   userInfoVar({ isLogin: true, isLoading: false });
-        // }}
-      >
+      <button className="block p-4 mx-auto rounded-md border" onClick={handleClick}>
         ボタン
       </button>
     </div>

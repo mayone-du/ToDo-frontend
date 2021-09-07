@@ -1,0 +1,9 @@
+mutation CreateTask($title: String!, $content: String, $taskImage: Upload) {
+  createTask(input: { title: $title, content: $content, taskImage: $taskImage }) {
+    task {
+      id
+      title
+      content
+    }
+  }
+}

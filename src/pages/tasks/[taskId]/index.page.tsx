@@ -31,7 +31,8 @@ const TaskIdPage: CustomNextPage = () => {
 
   // エラー（タスクの作成者が自分でない場合も含む）
   if (error || data?.task?.createUser.id !== userInfo.userId) {
-    return <Error />;
+    console.error(error);
+    return <Error errorMessage={error?.message ?? "タスクが存在しません。"} />;
   }
 
   // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
