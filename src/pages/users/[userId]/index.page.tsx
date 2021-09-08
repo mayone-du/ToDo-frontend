@@ -13,6 +13,7 @@ import { Layout } from "src/layouts";
 import { DetailData } from "src/pages/users/components/DetailData";
 import { MyUserInfo } from "src/pages/users/components/MyUserInfo";
 
+// 各ユーザーのIDを取得
 export const getStaticPaths: GetStaticPaths = async () => {
   const apolloClient = initializeApollo(null, "");
   const { data } = await apolloClient.query<GetAllUsersQuery>({ query: GetAllUsersDocument });
@@ -32,13 +33,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths: ids, fallback: false };
 };
 
+// 各ユーザーのIDから詳細を取得
 export const getStaticProps: GetStaticProps = async (context) => {
   const apolloClient = initializeApollo(null, "");
   const userId = context.params?.userId;
   const { data } = await apolloClient.query<GetUserQuery, GetUserQueryVariables>({
     query: GetUserDocument,
     variables: {
-      id: userId as string,
+      id: userId?.toString() ?? "",
     },
   });
 

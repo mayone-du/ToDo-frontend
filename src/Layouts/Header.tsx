@@ -1,17 +1,17 @@
 import { useReactiveVar } from "@apollo/client";
 import { Popover } from "@headlessui/react";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/client";
+import { signOut, useSession } from "next-auth/client";
 import { memo, useCallback } from "react";
 import { userInfoVar } from "src/graphql/apollo/cache";
+import { useAuthModal } from "src/libs/hooks/useAuthModal";
 import { HEADER_MENUS } from "src/utils/HEADER_MENUS";
 
 export const Header: React.VFC = memo(() => {
   const [session] = useSession();
   const userInfo = useReactiveVar(userInfoVar);
-  const handleSignIn = useCallback(() => {
-    signIn();
-  }, []);
+  const { handleOpenModal, renderModal } = useAuthModal();
+
   const handleSignOut = useCallback(() => {
     signOut();
   }, []);
@@ -117,9 +117,12 @@ export const Header: React.VFC = memo(() => {
             )}
             {/* 非ログイン時の場合 */}
             {!userInfo.isLoading && !userInfo.isLogin && (
-              <button onClick={handleSignIn} className="block p-2 border">
-                SignIn
-              </button>
+              <div>
+                <button onClick={handleOpenModal} className="block p-2 border">
+                  SignIn
+                </button>
+                {renderModal()}
+              </div>
             )}
           </li>
         </ul>

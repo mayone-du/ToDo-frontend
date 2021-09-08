@@ -4,6 +4,7 @@ import type { GetAllUsersQuery } from "src/graphql/schemas/schema";
 export const ListData: React.VFC<GetAllUsersQuery | undefined> = (props) => {
   return (
     <div>
+      {/* すべてのユーザーを表示 */}
       {props?.allUsers?.edges.map((user, index) => {
         return (
           user?.node && (

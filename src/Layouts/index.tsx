@@ -20,7 +20,7 @@ export const Layout = (page: NextPage) => {
     if (idToken === "") {
       (async () => {
         const session = await getSession();
-        // nextauthのapiでsessionにidTokenをセットしているためstring型を強制
+        // nextauthのapiルートでsessionにidTokenをセットしているためstring型を強制
         const idToken = session?.idToken as string;
         idTokenVar(idToken);
 

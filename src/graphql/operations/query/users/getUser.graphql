@@ -3,5 +3,7 @@ query GetUser($id: ID!) {
     id
     username
     email
+    firstName
+    lastName
   }
 }
