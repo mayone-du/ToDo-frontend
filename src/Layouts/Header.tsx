@@ -28,9 +28,9 @@ export const Header: React.VFC = memo(() => {
   ];
 
   return (
-    <header className="md:px-60 lg:px-72">
+    <header className="py-2 md:px-60 lg:px-72">
       <nav className="flex justify-between items-center">
-        <div className="my-2">
+        <div>
           <Link href="/">
             <a className="block text-lg font-bold">LOGO</a>
           </Link>
@@ -39,7 +39,7 @@ export const Header: React.VFC = memo(() => {
           {/* ヘッダーメニューを事前に定義し、mapで回して表示 */}
           {HEADER_MENUS.map((menu, index) => {
             return (
-              <li key={index.toString()} className="m-2">
+              <li key={index.toString()} className="mx-2">
                 <Link href={menu.href}>
                   <a>{menu.label}</a>
                 </Link>
@@ -50,7 +50,7 @@ export const Header: React.VFC = memo(() => {
           {userInfo.isLoading && (
             <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>
           )}
-          <li className="m-2">
+          <li className="mx-2">
             {/* ログイン状態によって変更 */}
             {/* ログイン時の場合 */}
             {!userInfo.isLoading && userInfo.isLogin && (
@@ -118,7 +118,10 @@ export const Header: React.VFC = memo(() => {
             {/* 非ログイン時の場合 */}
             {!userInfo.isLoading && !userInfo.isLogin && (
               <div>
-                <button onClick={handleOpenModal} className="block p-2 border">
+                <button
+                  onClick={handleOpenModal}
+                  className="block py-2 px-4 hover:bg-gray-50 rounded border shadow-sm hover:shadow transition-all"
+                >
                   SignIn
                 </button>
                 {renderModal()}
