@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AiTwotoneDelete } from "react-icons/ai";
 import type { GetMyAllTasksQuery } from "src/graphql/schemas/schema";
 import { CreateForm } from "src/pages/tasks/components/CreateForm";
+import { MEDIAFILE_API_ENDPOINT } from "src/utils/API_ENDPOINTS";
 
 export const ListData: React.VFC<GetMyAllTasksQuery | undefined> = (props) => {
   return (
@@ -16,6 +17,15 @@ export const ListData: React.VFC<GetMyAllTasksQuery | undefined> = (props) => {
                 <Link href={`/tasks/${task.node.id}`}>
                   <a className="block underline">{task.node.title}</a>
                 </Link>
+                {task.node.taskImage ? (
+                  <img
+                    src={MEDIAFILE_API_ENDPOINT + task.node.taskImage}
+                    alt=""
+                    className="block object-cover w-6 h-6"
+                  />
+                ) : (
+                  <div className="text-xs">No image</div>
+                )}
                 <button className="block">
                   <AiTwotoneDelete className="w-10 h-10" />
                 </button>

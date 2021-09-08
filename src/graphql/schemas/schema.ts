@@ -390,7 +390,7 @@ export type GetMyAllTasksQuery = (
       { __typename?: 'TaskNodeEdge' }
       & { node?: Maybe<(
         { __typename?: 'TaskNode' }
-        & Pick<TaskNode, 'id' | 'title' | 'content' | 'isDone' | 'createdAt'>
+        & Pick<TaskNode, 'id' | 'title' | 'content' | 'isDone' | 'createdAt' | 'taskImage'>
       )> }
     )>> }
   )> }
@@ -635,6 +635,7 @@ export const GetMyAllTasksDocument = gql`
         content
         isDone
         createdAt
+        taskImage
       }
     }
   }

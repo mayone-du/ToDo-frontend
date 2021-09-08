@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { GetTaskDocument } from "src/graphql/schemas/schema";
