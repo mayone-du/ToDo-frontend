@@ -1,18 +1,21 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { GetTaskDocument } from "src/graphql/schemas/schema";
 import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
 import { FILE_ACCEPT_EXTENTIONS } from "src/utils/constants/FILE_ACCEPT_EXTENTIONS";
 
-// 4KBまで許可
-const FILE_ACCEPT_SIZE = 1024 * 4;
+// 10KBまで許可
+const FILE_ACCEPT_SIZE = 1024 * 10;
 
 export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
   // タスクを更新したら再フェッチ
   const [updateTaskMutation, { loading: isLoading }] = useUpdateTaskMutation({
     refetchQueries: [GetTaskDocument],
   });
+
+  // プレビュー画像のステート
+  const [previewImageUrl, setPreviewImageUrl] = useState<string>("");
 
   // タスクのローカルステート
   const [taskValues, setTaskValues] = useState<{
@@ -69,17 +72,32 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
         }
 
         setTaskValues({ ...taskValues, taskImage: file });
+
+        // ファイルを読み込みプレビュー用ステートにセット
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => {
+          setPreviewImageUrl(e.target?.result?.toString() || "");
+        };
+        fileReader.readAsDataURL(file);
+
+        // taskValues.taskImage && console.log(fileReader.readAsDataURL(taskValues.taskImage));
       }
     },
     [taskValues],
   );
+
+  // TODO: 画像のリセット用関数
+  const handleResetTaskImage = useCallback(() => {
+    setPreviewImageUrl("");
+    setTaskValues({ ...taskValues, taskImage: null });
+  }, [taskValues]);
 
   // タスクの更新用関数
   const handleUpdateTask = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // TODO: 値のバリデーション
-    console.log(taskValues);
+    // console.log(taskValues);
     if (taskValues.title === "") {
       toast.error("タイトルを入力してください。");
       return;
@@ -131,7 +149,14 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
         // 受け付ける拡張子 あくまでユーザーヒントなので、別途検証する。
         accept="image/jpg, image/jpeg, image/png"
       />
-      {/* {<img src={new FileReader().readAsDataURL(taskValues.taskImage!)} alt="" />} */}
+      {previewImageUrl ? (
+        <div>
+          <img src={previewImageUrl} alt="" />
+          <button onClick={handleResetTaskImage}>画像リセット</button>
+        </div>
+      ) : (
+        <div>プレビュー画像はありません</div>
+      )}
       <button disabled={isLoading} className="p-2 disabled:bg-gray-400 border" type="submit">
         update
       </button>
