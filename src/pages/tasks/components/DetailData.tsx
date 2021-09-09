@@ -1,11 +1,35 @@
 import router from "next/router";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
+import { GetTaskDocument } from "src/graphql/schemas/schema";
+import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
 import { useDeleteTaskMutation } from "src/graphql/schemas/schema";
 import { UpdateForm } from "src/pages/tasks/components/UpdateForm";
 
 export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
-  const [deleteTaskMutation, { loading: isLoading }] = useDeleteTaskMutation();
+  const [updateTaskMutation, { loading: isDoneLoading }] = useUpdateTaskMutation({
+    refetchQueries: [{ query: GetTaskDocument, variables: { id: props?.task?.id ?? "" } }],
+  });
+  const [deleteTaskMutation, { loading: isDeleteLoading }] = useDeleteTaskMutation();
+
+  // taskを完了済みに更新
+  const handleDoneTask = async () => {
+    try {
+      const { errors } = await updateTaskMutation({
+        variables: {
+          id: props?.task?.id ?? "",
+          isDone: true,
+        },
+      });
+      if (errors) {
+        throw errors;
+      }
+      toast.success("タスクを完了しました");
+    } catch (error) {
+      toast.error("エラーが発生しました");
+      console.error(error);
+    }
+  };
 
   // taskの削除
   const handleDeleteTask = async () => {
@@ -19,7 +43,7 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
       }
 
       toast.success("削除しました。");
-      router.push("/");
+      router.push("/tasks");
     } catch (error) {
       toast.error("削除に失敗しました。");
     }
@@ -37,13 +61,23 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
           "タスク画像はありません。"
         )}
       </div>
-      <button
-        onClick={handleDeleteTask}
-        disabled={isLoading}
-        className="block py-2 px-4 mx-auto disabled:bg-gray-500 rounded border"
-      >
-        削除
-      </button>
+      <div className="flex items-center">
+        <button
+          onClick={handleDeleteTask}
+          disabled={isDeleteLoading}
+          className="block py-2 px-4 mx-auto disabled:bg-gray-500 rounded border"
+        >
+          削除
+        </button>
+        <button
+          onClick={handleDoneTask}
+          disabled={isDoneLoading}
+          className="block py-2 px-4 mx-auto disabled:bg-gray-500 rounded border"
+        >
+          完了
+        </button>
+      </div>
+      <div>isDone: {props?.task?.isDone.toString()}</div>
       <UpdateForm {...props} />
     </div>
   );
