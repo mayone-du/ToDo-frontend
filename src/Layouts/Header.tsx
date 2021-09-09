@@ -16,7 +16,7 @@ export const Header: React.VFC = memo(() => {
     signOut();
   }, []);
 
-  const menu_items = [
+  const PROFILE_MENU_ITEMS = [
     {
       label: "sample",
       href: "##",
@@ -78,14 +78,14 @@ export const Header: React.VFC = memo(() => {
                               <Popover.Button className="block w-full text-left">
                                 <Link href={`/users/${userInfo.userId}`}>
                                   <a className="block py-2 px-4 hover:bg-gray-200 transition-colors duration-300">
-                                    profile <br />
-                                    @hoge
+                                    {session?.user?.name} <br />
+                                    {session?.user?.email}
                                   </a>
                                 </Link>
                               </Popover.Button>
                             </li>
                             {/* メニューを表示 */}
-                            {menu_items.map((item, index) => {
+                            {PROFILE_MENU_ITEMS.map((item, index) => {
                               return (
                                 <li key={index}>
                                   <Popover.Button className="block w-full text-left">

@@ -1,3 +1,4 @@
+import { ThemeChanger } from "src/components/ThemeChanger";
 import type { GetUserQuery } from "src/graphql/schemas/schema";
 
 export const MyUserInfo: React.VFC<GetUserQuery | undefined> = (props) => {
@@ -7,6 +8,9 @@ export const MyUserInfo: React.VFC<GetUserQuery | undefined> = (props) => {
       <p>username: {props?.user?.username}</p>
       <p>fistName: {props?.user?.firstName}</p>
       <p>lastName: {props?.user?.lastName}</p>
+      <div>
+        <ThemeChanger />
+      </div>
     </div>
   );
 };
