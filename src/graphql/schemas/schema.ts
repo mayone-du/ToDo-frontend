@@ -100,6 +100,16 @@ export type PageInfo = {
   endCursor?: Maybe<Scalars['String']>;
 };
 
+export type ProfileNode = {
+  __typename?: 'ProfileNode';
+  id: Scalars['ID'];
+  relatedUser: UserNode;
+  selfIntroduction?: Maybe<Scalars['String']>;
+  githubUsername?: Maybe<Scalars['String']>;
+  twitterUsername?: Maybe<Scalars['String']>;
+  websiteUrl?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<UserNode>;
@@ -126,6 +136,7 @@ export type QueryAllUsersArgs = {
   email?: Maybe<Scalars['String']>;
   email_Icontains?: Maybe<Scalars['String']>;
   isStaff?: Maybe<Scalars['Boolean']>;
+  isSuperuser?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -260,6 +271,7 @@ export type UserNode = Node & {
   isStaff: Scalars['Boolean'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
+  relatedUser?: Maybe<ProfileNode>;
   createUser: TaskNodeConnection;
   socialAuth: SocialNodeConnection;
 };
@@ -405,7 +417,7 @@ export type GetTaskQuery = (
   { __typename?: 'Query' }
   & { task?: Maybe<(
     { __typename?: 'TaskNode' }
-    & Pick<TaskNode, 'id' | 'title' | 'content' | 'isDone'>
+    & Pick<TaskNode, 'id' | 'title' | 'content' | 'taskImage' | 'isDone'>
     & { createUser: (
       { __typename?: 'UserNode' }
       & Pick<UserNode, 'id' | 'email'>
@@ -451,6 +463,10 @@ export type GetUserQuery = (
   & { user?: Maybe<(
     { __typename?: 'UserNode' }
     & Pick<UserNode, 'id' | 'username' | 'email' | 'firstName' | 'lastName'>
+    & { relatedUser?: Maybe<(
+      { __typename?: 'ProfileNode' }
+      & Pick<ProfileNode, 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
+    )> }
   )> }
 );
 
@@ -674,6 +690,7 @@ export const GetTaskDocument = gql`
     id
     title
     content
+    taskImage
     isDone
     createUser {
       id
@@ -712,7 +729,7 @@ export type GetTaskLazyQueryHookResult = ReturnType<typeof useGetTaskLazyQuery>;
 export type GetTaskQueryResult = Apollo.QueryResult<GetTaskQuery, GetTaskQueryVariables>;
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
-  allUsers {
+  allUsers(isSuperuser: false) {
     edges {
       node {
         id
@@ -794,6 +811,12 @@ export const GetUserDocument = gql`
     email
     firstName
     lastName
+    relatedUser {
+      selfIntroduction
+      githubUsername
+      twitterUsername
+      websiteUrl
+    }
   }
 }
     `;

@@ -8,6 +8,7 @@ export const MyUserInfo: React.VFC<GetUserQuery | undefined> = (props) => {
       <p>username: {props?.user?.username}</p>
       <p>fistName: {props?.user?.firstName}</p>
       <p>lastName: {props?.user?.lastName}</p>
+      <p>自己紹介: {props?.user?.relatedUser?.selfIntroduction}</p>
       <div>
         <ThemeChanger />
       </div>

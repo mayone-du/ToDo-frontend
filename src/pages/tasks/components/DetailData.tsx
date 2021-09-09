@@ -30,6 +30,13 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
       <h1 className="py-4 text-center">タスクの詳細</h1>
       <h2 className="text-2xl font-bold">{props?.task?.title}</h2>
       <p>{props?.task?.content}</p>
+      <div>
+        {props?.task?.taskImage ? (
+          <img src={props.task.taskImage} alt="" className="block object-cover" />
+        ) : (
+          "タスク画像はありません。"
+        )}
+      </div>
       <button
         onClick={handleDeleteTask}
         disabled={isLoading}

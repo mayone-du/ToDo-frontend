@@ -5,7 +5,7 @@ import { signOut, useSession } from "next-auth/client";
 import { memo, useCallback } from "react";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { useAuthModal } from "src/libs/hooks/useAuthModal";
-import { HEADER_MENUS } from "src/utils/HEADER_MENUS";
+import { HEADER_MENUS } from "src/utils/menus/HEADER_MENUS";
 
 export const Header: React.VFC = memo(() => {
   const [session] = useSession();

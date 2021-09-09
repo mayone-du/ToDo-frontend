@@ -3,6 +3,7 @@ query GetTask($id: ID!) {
     id
     title
     content
+    taskImage
     isDone
     createUser {
       id

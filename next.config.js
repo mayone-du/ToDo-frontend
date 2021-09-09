@@ -7,6 +7,9 @@
 //     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 //     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 //   },
+// rewrites: async () => {
+//   return [{ source: "/", destination: "/root" }];
+// },
 //   pwa: {
 //     dest: "/public/pwa/sw",
 //   },
@@ -21,6 +24,9 @@ module.exports = {
     // CONTACT_SLACK_WEBHOOK_URL: process.env.CONTACT_SLACK_WEBHOOK_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  },
+  rewrites: async () => {
+    return [{ source: "/", destination: "/root" }];
   },
   pageExtensions: ["page.tsx", "page.ts"],
 };

@@ -5,5 +5,11 @@ query GetUser($id: ID!) {
     email
     firstName
     lastName
+    relatedUser {
+      selfIntroduction
+      githubUsername
+      twitterUsername
+      websiteUrl
+    }
   }
 }
