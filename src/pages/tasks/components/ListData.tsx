@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AiTwotoneDelete } from "react-icons/ai";
 import type { GetMyAllTasksQuery } from "src/graphql/schemas/schema";
 import { CreateForm } from "src/pages/tasks/components/CreateForm";
 import { MEDIAFILE_API_ENDPOINT } from "src/utils/API_ENDPOINTS";
@@ -28,9 +27,6 @@ export const ListData: React.VFC<GetMyAllTasksQuery | undefined> = (props) => {
                 ) : (
                   <div className="text-xs">No image</div>
                 )}
-                <button className="block">
-                  <AiTwotoneDelete className="w-10 h-10" />
-                </button>
               </li>
             )
           );
