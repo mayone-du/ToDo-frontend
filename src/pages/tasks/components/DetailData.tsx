@@ -4,6 +4,7 @@ import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { GetTaskDocument } from "src/graphql/schemas/schema";
 import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
 import { useDeleteTaskMutation } from "src/graphql/schemas/schema";
+import { NewUpdateForm } from "src/pages/tasks/components/NewUpdateForm";
 import { UpdateForm } from "src/pages/tasks/components/UpdateForm";
 
 export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
@@ -78,7 +79,8 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
         </button>
       </div>
       <div>isDone: {props?.task?.isDone.toString()}</div>
-      <UpdateForm {...props} />
+      {/* <UpdateForm {...props} /> */}
+      <NewUpdateForm {...props} />
     </div>
   );
 };

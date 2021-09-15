@@ -13,8 +13,8 @@ const ContactIndexPage: CustomNextPage = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<ContactInputs>();
-  const onSubmit = (data: ContactInputs) => {
-    alert(JSON.stringify(data));
+  const onSubmit = (formData: ContactInputs) => {
+    alert(JSON.stringify(formData));
   };
   return (
     <div>

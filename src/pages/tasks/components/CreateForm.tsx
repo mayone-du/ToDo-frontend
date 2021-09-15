@@ -16,12 +16,12 @@ export const CreateForm: React.VFC = () => {
   } = useForm<TaskInputs>();
 
   // タスクの作成用関数
-  const handleCreateTask = async (data: TaskInputs) => {
+  const handleCreateTask = async (formData: TaskInputs) => {
     try {
       // タスクを作成したらタスクの一覧を再取得
       const { errors } = await createTaskMutation({
         variables: {
-          title: data.taskTitle,
+          title: formData.taskTitle,
         },
         refetchQueries: [GetMyAllTasksDocument],
       });

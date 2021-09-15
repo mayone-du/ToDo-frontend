@@ -1,9 +1,17 @@
 import { useCallback, useState } from "react";
+// import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { GetTaskDocument } from "src/graphql/schemas/schema";
 import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
 import { FILE_ACCEPT_EXTENTIONS } from "src/utils/constants/FILE_ACCEPT_EXTENTIONS";
+
+// type TaskInputs = {
+//   title: string;
+//   content: string;
+//   isDone: boolean;
+//   taskImage: File;
+// };
 
 // 10KBまで許可
 const FILE_ACCEPT_SIZE = 1024 * 10;
@@ -13,6 +21,12 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
   const [updateTaskMutation, { loading: isLoading }] = useUpdateTaskMutation({
     refetchQueries: [GetTaskDocument],
   });
+
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<TaskInputs>();
 
   // プレビュー画像のステート
   const [previewImageUrl, setPreviewImageUrl] = useState<string>("");
