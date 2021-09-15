@@ -10,7 +10,7 @@ type ContactInputs = {
 const ContactIndexPage: CustomNextPage = () => {
   const {
     register,
-    // formState: { errors },
+    formState: { errors },
     handleSubmit,
   } = useForm<ContactInputs>();
   const onSubmit = (data: ContactInputs) => {
@@ -23,8 +23,15 @@ const ContactIndexPage: CustomNextPage = () => {
         <input
           type="text"
           className="block border"
-          {...register("title", { required: true, maxLength: 100 })}
+          {...register("title", { required: true, maxLength: 20 })}
         />
+        {/* タイトルのエラーハンドリング */}
+        {errors.title && (
+          <p className="pb-4 text-sm text-gray-500">
+            {errors.title.type === "required" ? "必須です。" : "20文字までです。"}
+          </p>
+        )}
+
         <textarea
           {...register("content", { required: true })}
           className="border resize-none"
