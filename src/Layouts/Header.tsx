@@ -50,7 +50,7 @@ export const Header: React.VFC = memo(() => {
           {userInfo.isLoading && (
             <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>
           )}
-          <li className="mx-2">
+          <li className="ml-2">
             {/* ログイン状態によって変更 */}
             {/* ログイン時の場合 */}
             {!userInfo.isLoading && userInfo.isLogin && (

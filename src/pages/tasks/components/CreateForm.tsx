@@ -1,61 +1,55 @@
-import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { GetMyAllTasksDocument, useCreateTaskMutation } from "src/graphql/schemas/schema";
 
+type TaskInputs = {
+  taskTitle: string;
+};
+
 export const CreateForm: React.VFC = () => {
   const [createTaskMutation, { loading: isLoading }] = useCreateTaskMutation();
-  const [taskTitle, setTaskTitle] = useState("");
 
-  const handleChangeTaskTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setTaskTitle(e.target.value);
-  }, []);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TaskInputs>();
 
   // タスクの作成用関数
-  const handleCreateTask = (e: React.ChangeEvent<HTMLFormElement>) => {
-    // formの送信を無効化
-    e.preventDefault();
+  const handleCreateTask = async (data: TaskInputs) => {
+    try {
+      // タスクを作成したらタスクの一覧を再取得
+      const { errors } = await createTaskMutation({
+        variables: {
+          title: data.taskTitle,
+        },
+        refetchQueries: [GetMyAllTasksDocument],
+      });
 
-    // タスク作成時のバリデーション
-    if (taskTitle === "") {
-      toast.error("タイトルを入力して下さい。");
-      return;
-    } else if (taskTitle.length >= 20) {
-      toast.error(`20文字以内で入力してください。現在の文字数 ${taskTitle.length}`);
-      return;
-    }
-
-    // 非同期即時関数内でタスク作成のmutationを実行
-    (async () => {
-      try {
-        // タスクを作成したらタスクの一覧を再取得
-        const { errors } = await createTaskMutation({
-          variables: {
-            title: taskTitle,
-          },
-          refetchQueries: [GetMyAllTasksDocument],
-        });
-
-        // エラーがあれば例外処理を発生
-        if (errors) {
-          throw errors;
-        }
-        toast.success("送信");
-        setTaskTitle("");
-      } catch (error) {
-        console.error(error);
-        toast.error("失敗");
+      // エラーがあれば例外処理を発生
+      if (errors) {
+        throw errors;
       }
-    })();
+      toast.success("送信");
+    } catch (error) {
+      console.error(error);
+      toast.error("失敗");
+    }
   };
 
   return (
-    <form onSubmit={handleCreateTask}>
+    <form onSubmit={handleSubmit(handleCreateTask)}>
       <input
         type="text"
         className="p-2 rounded border"
-        onChange={handleChangeTaskTitle}
-        value={taskTitle}
+        placeholder="タスクのタイトル"
+        {...register("taskTitle", { required: true, maxLength: 100 })}
       />
+      {errors.taskTitle && (
+        <p className="pb-4 text-sm text-gray-500">
+          {errors.taskTitle.type === "required" ? "必須です。" : "最大100文字です。"}
+        </p>
+      )}
       {/* mutationのローディング中は無効化する */}
       <button
         type="submit"
