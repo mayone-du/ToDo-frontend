@@ -121,7 +121,6 @@ export default NextAuth({
       }
 
       // トークンの期限を確認。有効期限内であればトークンをそのまま返却
-      // Return previous token if the access token has not expired yet
       if (Date.now() < token.accessTokenExpires) {
         // console.log("トークンは有効です。");
         return token;
@@ -129,7 +128,6 @@ export default NextAuth({
 
       // console.log("トークンは無効です。");
       // アクセストークンの期限が切れていたら更新してその値を返す
-      // Access token has expired, try to update it
       return refreshAccessToken(token);
     },
 

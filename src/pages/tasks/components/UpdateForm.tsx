@@ -57,6 +57,7 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
         {errors && (
           <p className="pt-2 pb-6 text-sm text-gray-500">
             {errors.title?.type === "required" && "必須項目"}
+            {errors.title?.type === "maxLength" && "20文字まで"}
           </p>
         )}
       </div>

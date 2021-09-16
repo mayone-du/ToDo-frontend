@@ -23,6 +23,7 @@ const ContactIndexPage: CustomNextPage = () => {
         <input
           type="text"
           className="block border"
+          placeholder="タイトル"
           {...register("title", { required: true, maxLength: 20 })}
         />
         {/* タイトルのエラーハンドリング */}
@@ -33,8 +34,9 @@ const ContactIndexPage: CustomNextPage = () => {
         )}
 
         <textarea
-          {...register("content", { required: true })}
+          placeholder="お問い合わせ内容"
           className="border resize-none"
+          {...register("content", { required: true })}
         ></textarea>
         <button type="submit" className="block text-center rounded-md border">
           送信
