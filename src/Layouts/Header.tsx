@@ -68,13 +68,7 @@ export const Header: React.VFC = memo(() => {
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                           }}
-                        >
-                          {/* {session?.user?.image ? (
-                            <img src={session.user.image} alt="" />
-                          ) : (
-                            <div>No Image</div>
-                          )} */}
-                        </Popover.Button>
+                        ></Popover.Button>
                         <Popover.Panel className="absolute -right-2 z-10 mt-4 w-72 bg-white dark:bg-black rounded border shadow-md transform">
                           <ul>
                             {/* プロフィールのリンク */}

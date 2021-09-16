@@ -22,7 +22,6 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
   } = useForm<TaskInputs>();
 
   // タスクの更新用関数
@@ -85,14 +84,12 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
 
               // ファイルサイズ
               if (file.size > 1024 * 4) {
-                setError("taskImage", { type: "validate", message: "file size error" });
-                return false;
+                return "ファイルサイズエラー";
               }
 
               // 拡張子
               if (!FILE_ACCEPT_EXTENTIONS.includes(ext)) {
-                setError("taskImage", { type: "validate", message: "拡張子エラー" });
-                return false;
+                return "拡張子エラー";
               }
 
               return true;
@@ -100,12 +97,7 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
           })}
         />
         {errors.taskImage && (
-          <p className="pt-2 pb-6 text-sm text-gray-500 bg-red-800">
-            {errors.taskImage.message}
-
-            {/* eslint-disable-next-line no-console */}
-            {console.log(errors.taskImage)}
-          </p>
+          <p className="pt-2 pb-6 text-sm text-gray-500 bg-red-800">{errors.taskImage.message}</p>
         )}
       </div>
       <button
