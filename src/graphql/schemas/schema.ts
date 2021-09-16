@@ -26,6 +26,21 @@ export type Scalars = {
   Upload: any;
 };
 
+export type CreateProfileMutationInput = {
+  userId: Scalars['ID'];
+  profileName: Scalars['String'];
+  selfIntroduction?: Maybe<Scalars['String']>;
+  githubUsername?: Maybe<Scalars['String']>;
+  twitterUsername?: Maybe<Scalars['String']>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type CreateProfileMutationPayload = {
+  __typename?: 'CreateProfileMutationPayload';
+  profile?: Maybe<ProfileNode>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
 export type CreateTaskMutationInput = {
   title: Scalars['String'];
   content?: Maybe<Scalars['String']>;
@@ -55,6 +70,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Social Auth Mutation */
   socialAuth?: Maybe<SocialAuth>;
+  createProfile?: Maybe<CreateProfileMutationPayload>;
+  updateProfile?: Maybe<UpdateProfileMutationPayload>;
   createTask?: Maybe<CreateTaskMutationPayload>;
   updateTask?: Maybe<UpdateTaskMutationPayload>;
   deleteTask?: Maybe<DeleteTaskMutationPayload>;
@@ -64,6 +81,16 @@ export type Mutation = {
 export type MutationSocialAuthArgs = {
   accessToken: Scalars['String'];
   provider: Scalars['String'];
+};
+
+
+export type MutationCreateProfileArgs = {
+  input: CreateProfileMutationInput;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateProfileMutationInput;
 };
 
 
@@ -104,6 +131,7 @@ export type ProfileNode = {
   __typename?: 'ProfileNode';
   id: Scalars['ID'];
   relatedUser: UserNode;
+  profileName: Scalars['String'];
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
@@ -115,6 +143,8 @@ export type Query = {
   user?: Maybe<UserNode>;
   allUsers?: Maybe<UserNodeConnection>;
   myUserInfo?: Maybe<UserNode>;
+  profile?: Maybe<ProfileNode>;
+  myProfile?: Maybe<ProfileNode>;
   task?: Maybe<TaskNode>;
   myAllTasks?: Maybe<TaskNodeConnection>;
 };
@@ -137,6 +167,11 @@ export type QueryAllUsersArgs = {
   email_Icontains?: Maybe<Scalars['String']>;
   isStaff?: Maybe<Scalars['Boolean']>;
   isSuperuser?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QueryProfileArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -239,6 +274,21 @@ export type TaskNodeEdge = {
   node?: Maybe<TaskNode>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
+};
+
+export type UpdateProfileMutationInput = {
+  id: Scalars['ID'];
+  profileName: Scalars['String'];
+  selfIntroduction?: Maybe<Scalars['String']>;
+  githubUsername?: Maybe<Scalars['String']>;
+  twitterUsername?: Maybe<Scalars['String']>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type UpdateProfileMutationPayload = {
+  __typename?: 'UpdateProfileMutationPayload';
+  profile?: Maybe<ProfileNode>;
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 export type UpdateTaskMutationInput = {
@@ -437,6 +487,10 @@ export type GetAllUsersQuery = (
       & { node?: Maybe<(
         { __typename?: 'UserNode' }
         & Pick<UserNode, 'id' | 'email' | 'username'>
+        & { relatedUser?: Maybe<(
+          { __typename?: 'ProfileNode' }
+          & Pick<ProfileNode, 'id' | 'profileName' | 'selfIntroduction'>
+        )> }
       )> }
     )>> }
   )> }
@@ -465,7 +519,7 @@ export type GetUserQuery = (
     & Pick<UserNode, 'id' | 'username' | 'email' | 'firstName' | 'lastName'>
     & { relatedUser?: Maybe<(
       { __typename?: 'ProfileNode' }
-      & Pick<ProfileNode, 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
+      & Pick<ProfileNode, 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
     )> }
   )> }
 );
@@ -735,6 +789,11 @@ export const GetAllUsersDocument = gql`
         id
         email
         username
+        relatedUser {
+          id
+          profileName
+          selfIntroduction
+        }
       }
     }
   }
@@ -812,6 +871,7 @@ export const GetUserDocument = gql`
     firstName
     lastName
     relatedUser {
+      profileName
       selfIntroduction
       githubUsername
       twitterUsername

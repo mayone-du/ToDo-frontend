@@ -63,12 +63,17 @@ export const Header: React.VFC = memo(() => {
                           className={`ring-blue-300 overflow-hidden rounded-full h-10 w-10 block active:ring hover:shadow-lg ${
                             isOpen && "ring"
                           }`}
+                          style={{
+                            backgroundImage: `url('${session?.user?.image ?? "/sample-img.jpg"}')`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }}
                         >
-                          {session?.user?.image ? (
+                          {/* {session?.user?.image ? (
                             <img src={session.user.image} alt="" />
                           ) : (
                             <div>No Image</div>
-                          )}
+                          )} */}
                         </Popover.Button>
                         <Popover.Panel className="absolute -right-2 z-10 mt-4 w-72 bg-white dark:bg-black rounded border shadow-md transform">
                           <ul>

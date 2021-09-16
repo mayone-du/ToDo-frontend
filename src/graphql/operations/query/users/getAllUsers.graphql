@@ -5,6 +5,11 @@ query GetAllUsers {
         id
         email
         username
+        relatedUser {
+          id
+          profileName
+          selfIntroduction
+        }
       }
     }
   }

@@ -3,19 +3,22 @@ import type { GetAllUsersQuery } from "src/graphql/schemas/schema";
 
 export const ListData: React.VFC<GetAllUsersQuery | undefined> = (props) => {
   return (
-    <div>
+    <ul className="flex flex-wrap">
       {/* すべてのユーザーを表示 */}
       {props?.allUsers?.edges.map((user, index) => {
         return (
           user?.node && (
-            <div key={index}>
+            <li key={index} className="p-4 w-1/3">
               <Link href={`/users/${user.node.id}`}>
-                <a className="text-blue-500 underline">{user?.node?.email}</a>
+                <a className="block rounded-md border shadow-sm">
+                  <div>{user?.node?.email}</div>
+                  <div>{user.node.relatedUser?.profileName ?? "ProfileName"}</div>
+                </a>
               </Link>
-            </div>
+            </li>
           )
         );
       })}
-    </div>
+    </ul>
   );
 };
