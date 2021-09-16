@@ -1,20 +1,16 @@
-import { useCallback, useState } from "react";
-// import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { GetTaskDocument } from "src/graphql/schemas/schema";
 import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
 import { FILE_ACCEPT_EXTENTIONS } from "src/utils/constants/FILE_ACCEPT_EXTENTIONS";
 
-// type TaskInputs = {
-//   title: string;
-//   content: string;
-//   isDone: boolean;
-//   taskImage: File;
-// };
-
-// 10KBまで許可
-const FILE_ACCEPT_SIZE = 1024 * 10;
+type TaskInputs = {
+  title: string;
+  content: string;
+  isDone: boolean;
+  taskImage: File;
+};
 
 export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
   // タスクを更新したら再フェッチ
@@ -22,112 +18,20 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
     refetchQueries: [GetTaskDocument],
   });
 
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<TaskInputs>();
-
-  // プレビュー画像のステート
-  const [previewImageUrl, setPreviewImageUrl] = useState<string>("");
-
-  // タスクのローカルステート
-  const [taskValues, setTaskValues] = useState<{
-    id: string;
-    title: string;
-    content: string;
-    isDone: boolean | undefined;
-    taskImage: File | null;
-  }>({
-    id: props?.task?.id ?? "",
-    title: props?.task?.title ?? "",
-    content: props?.task?.content ?? "",
-    isDone: props?.task?.isDone,
-    taskImage: null,
-  });
-
-  // タスクのタイトルが変更された時
-  const handleChangeTitle = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setTaskValues({ ...taskValues, title: e.target.value });
-    },
-    [taskValues],
-  );
-  // タスクの内容が変更された時
-  const handleChangeContent = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setTaskValues({ ...taskValues, content: e.target.value });
-    },
-    [taskValues],
-  );
-  // タスクの画像が変更された時
-  const handleChangeTaskImage = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        const fileSize = file.size;
-        const fileName = file.name;
-        const ext = fileName.slice(fileName.lastIndexOf(".") + 1);
-
-        if (fileSize > FILE_ACCEPT_SIZE) {
-          // ファイルサイズの確認
-          toast.error(`${fileSize}バイトのファイルです。${FILE_ACCEPT_SIZE}以下にしてください。`);
-          e.target.value = "";
-          // この前に一度他のファイルを入れているとそれが維持されてしまうため、初期化
-          setTaskValues({ ...taskValues, taskImage: null });
-          return;
-        } else if (!FILE_ACCEPT_EXTENTIONS.includes(ext)) {
-          // ファイルの拡張子の確認
-          toast.error(FILE_ACCEPT_EXTENTIONS.toString() + "の拡張子のみ可能です。");
-          e.target.value = "";
-          // この前に一度他のファイルを入れているとそれが維持されてしまうため、初期化
-          setTaskValues({ ...taskValues, taskImage: null });
-          return;
-        }
-
-        setTaskValues({ ...taskValues, taskImage: file });
-
-        // ファイルを読み込みプレビュー用ステートにセット
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-          setPreviewImageUrl(e.target?.result?.toString() || "");
-        };
-        fileReader.readAsDataURL(file);
-
-        // taskValues.taskImage && console.log(fileReader.readAsDataURL(taskValues.taskImage));
-      }
-    },
-    [taskValues],
-  );
-
-  // TODO: 画像のリセット用関数
-  const handleResetTaskImage = useCallback(() => {
-    setPreviewImageUrl("");
-    setTaskValues({ ...taskValues, taskImage: null });
-  }, [taskValues]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<TaskInputs>();
 
   // タスクの更新用関数
-  const handleUpdateTask = async (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // TODO: 値のバリデーション
-    // console.log(taskValues);
-    if (taskValues.title === "") {
-      toast.error("タイトルを入力してください。");
-      return;
-    } else if (taskValues.title.length > 20) {
-      toast.error("20文字以内にしてください。");
-      return;
-    } else if (taskValues.taskImage?.size && taskValues.taskImage.size > FILE_ACCEPT_SIZE) {
-      toast.error(taskValues.taskImage?.size + "バイトのファイルです。1MB以下にしてください。");
-      return;
-    }
-
-    // バリデーションが通ればmutationを実行
+  const handleUpdateTask = async (formData: TaskInputs) => {
     try {
       const { errors } = await updateTaskMutation({
         variables: {
-          ...taskValues,
+          id: props?.task?.id ?? "",
+          ...formData,
         },
       });
       if (errors) {
@@ -141,37 +45,71 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
   };
 
   return (
-    <form onSubmit={handleUpdateTask}>
-      <input
-        type="text"
-        placeholder="タスクのタイトル"
-        className="p-2 rounded border"
-        value={taskValues.title}
-        onChange={handleChangeTitle}
-      />
-      <input
-        type="text"
-        placeholder="タスクの内容"
-        className="p-2 rounded border"
-        value={taskValues.content}
-        onChange={handleChangeContent}
-      />
-      <input
-        type="file"
-        className="p-2 rounded border"
-        onChange={handleChangeTaskImage}
-        // 受け付ける拡張子 あくまでユーザーヒントなので、別途検証する。
-        accept="image/jpg, image/jpeg, image/png"
-      />
-      {previewImageUrl ? (
-        <div>
-          <img src={previewImageUrl} alt="" />
-          <button onClick={handleResetTaskImage}>画像リセット</button>
-        </div>
-      ) : (
-        <div>プレビュー画像はありません</div>
-      )}
-      <button disabled={isLoading} className="p-2 disabled:bg-gray-400 border" type="submit">
+    <form onSubmit={handleSubmit(handleUpdateTask)}>
+      <div className="flex items-center">
+        <input
+          type="text"
+          placeholder="タスクのタイトル"
+          className="p-2 rounded border"
+          defaultValue={props?.task?.title}
+          {...register("title", { required: true, maxLength: 20 })}
+        />
+
+        {errors && (
+          <p className="pt-2 pb-6 text-sm text-gray-500">
+            {errors.title?.type === "required" && "必須項目"}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <input
+          type="text"
+          placeholder="タスクの内容"
+          className="p-2 rounded border"
+          defaultValue={props?.task?.content ?? ""}
+          {...register("content")}
+        />
+      </div>
+      <div>
+        <input
+          type="file"
+          className="p-2 rounded border"
+          // 受け付ける拡張子 あくまでユーザーヒントなので、別途検証する。
+          accept="image/jpg, image/jpeg, image/png"
+          {...register("taskImage", {
+            validate: (file: any) => {
+              const ext = file[0].name.slice(file[0].name.lastIndexOf(".") + 1);
+
+              // エラーチェック
+              // ファイルサイズ
+              if (file[0].size > 1024 * 4) {
+                setError("taskImage", { type: "validate", message: "file size error" });
+                return false;
+              }
+              // 拡張子
+              if (!FILE_ACCEPT_EXTENTIONS.includes(ext)) {
+                setError("taskImage", { type: "validate", message: "拡張子エラー" });
+                return false;
+              }
+              return true;
+            },
+          })}
+        />
+        {errors.taskImage && (
+          <p className="pt-2 pb-6 text-sm text-gray-500 bg-red-800">
+            {errors.taskImage.message}
+
+            {/* eslint-disable-next-line no-console */}
+            {console.log(errors.taskImage)}
+          </p>
+        )}
+      </div>
+      <button
+        disabled={isLoading}
+        className="block p-2 mx-auto disabled:bg-gray-400 rounded border border-blue-500 shadow-sm hover:shadow"
+        type="submit"
+      >
         update
       </button>
     </form>

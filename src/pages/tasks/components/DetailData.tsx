@@ -4,8 +4,8 @@ import type { GetTaskQuery } from "src/graphql/schemas/schema";
 import { GetTaskDocument } from "src/graphql/schemas/schema";
 import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
 import { useDeleteTaskMutation } from "src/graphql/schemas/schema";
-import { NewUpdateForm } from "src/pages/tasks/components/NewUpdateForm";
 import { UpdateForm } from "src/pages/tasks/components/UpdateForm";
+import { MEDIAFILE_API_ENDPOINT } from "src/utils/API_ENDPOINTS";
 
 export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
   const [updateTaskMutation, { loading: isDoneLoading }] = useUpdateTaskMutation({
@@ -57,7 +57,11 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
       <p>{props?.task?.content}</p>
       <div>
         {props?.task?.taskImage ? (
-          <img src={props.task.taskImage} alt="" className="block object-cover" />
+          <img
+            src={`${MEDIAFILE_API_ENDPOINT}${props.task.taskImage}`}
+            alt=""
+            className="block object-cover"
+          />
         ) : (
           "タスク画像はありません。"
         )}
@@ -79,8 +83,7 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
         </button>
       </div>
       <div>isDone: {props?.task?.isDone.toString()}</div>
-      {/* <UpdateForm {...props} /> */}
-      <NewUpdateForm {...props} />
+      <UpdateForm {...props} />
     </div>
   );
 };
