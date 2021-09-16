@@ -9,7 +9,7 @@ type TaskInputs = {
   title: string;
   content: string;
   isDone: boolean;
-  taskImage: File;
+  taskImage: FileList;
 };
 
 export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
@@ -78,12 +78,12 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
           // 受け付ける拡張子 あくまでユーザーヒントなので、別途検証する。
           accept="image/jpg, image/jpeg, image/png"
           {...register("taskImage", {
-            validate: (file: any) => {
-              const ext = file[0].name.slice(file[0].name.lastIndexOf(".") + 1);
+            validate: (fileList) => {
+              const ext = fileList[0].name.slice(fileList[0].name.lastIndexOf(".") + 1);
 
               // エラーチェック
               // ファイルサイズ
-              if (file[0].size > 1024 * 4) {
+              if (fileList[0].size > 1024 * 4) {
                 setError("taskImage", { type: "validate", message: "file size error" });
                 return false;
               }
