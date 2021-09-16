@@ -13,6 +13,7 @@ export const CreateForm: React.VFC = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<TaskInputs>();
 
   // タスクの作成用関数
@@ -25,11 +26,11 @@ export const CreateForm: React.VFC = () => {
         },
         refetchQueries: [GetMyAllTasksDocument],
       });
-
       // エラーがあれば例外処理を発生
       if (errors) {
         throw errors;
       }
+      setValue("taskTitle", "");
       toast.success("送信");
     } catch (error) {
       console.error(error);
@@ -43,11 +44,11 @@ export const CreateForm: React.VFC = () => {
         type="text"
         className="p-2 rounded border"
         placeholder="タスクのタイトル"
-        {...register("taskTitle", { required: true, maxLength: 100 })}
+        {...register("taskTitle", { required: true, maxLength: 20 })}
       />
       {errors.taskTitle && (
         <p className="pb-4 text-sm text-gray-500">
-          {errors.taskTitle.type === "required" ? "必須です。" : "最大100文字です。"}
+          {errors.taskTitle.type === "required" ? "必須です。" : "最大20文字です。"}
         </p>
       )}
       {/* mutationのローディング中は無効化する */}

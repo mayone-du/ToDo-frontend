@@ -80,24 +80,26 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
             // エラーチェック
             validate: (fileList) => {
               const file = fileList[0];
-              const ext = file.name.slice(file.name.lastIndexOf(".") + 1);
+              if (file) {
+                const ext = file.name.slice(file.name.lastIndexOf(".") + 1);
 
-              // ファイルサイズ
-              if (file.size > 1024 * 4) {
-                return "ファイルサイズエラー";
+                // ファイルサイズ
+                if (file.size > 1024 * 4) {
+                  return "ファイルサイズエラー";
+                }
+
+                // 拡張子
+                if (!FILE_ACCEPT_EXTENTIONS.includes(ext)) {
+                  return "拡張子エラー";
+                }
+
+                return true;
               }
-
-              // 拡張子
-              if (!FILE_ACCEPT_EXTENTIONS.includes(ext)) {
-                return "拡張子エラー";
-              }
-
-              return true;
             },
           })}
         />
         {errors.taskImage && (
-          <p className="pt-2 pb-6 text-sm text-gray-500 bg-red-800">{errors.taskImage.message}</p>
+          <p className="pt-2 pb-6 text-sm text-gray-500">{errors.taskImage.message}</p>
         )}
       </div>
       <button
