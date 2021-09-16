@@ -78,20 +78,23 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
           // 受け付ける拡張子 あくまでユーザーヒントなので、別途検証する。
           accept="image/jpg, image/jpeg, image/png"
           {...register("taskImage", {
+            // エラーチェック
             validate: (fileList) => {
-              const ext = fileList[0].name.slice(fileList[0].name.lastIndexOf(".") + 1);
+              const file = fileList[0];
+              const ext = file.name.slice(file.name.lastIndexOf(".") + 1);
 
-              // エラーチェック
               // ファイルサイズ
-              if (fileList[0].size > 1024 * 4) {
+              if (file.size > 1024 * 4) {
                 setError("taskImage", { type: "validate", message: "file size error" });
                 return false;
               }
+
               // 拡張子
               if (!FILE_ACCEPT_EXTENTIONS.includes(ext)) {
                 setError("taskImage", { type: "validate", message: "拡張子エラー" });
                 return false;
               }
+
               return true;
             },
           })}
