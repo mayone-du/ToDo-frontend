@@ -1,6 +1,7 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
 import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 import { useEffect } from "react";
 import { Error } from "src/components/Error";
 import { NotAuth } from "src/components/NotAuth";
@@ -26,29 +27,28 @@ const TaskIdPage: CustomNextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
-  // タスクのデータとユーザー情報のローディング
-  if (isDataLoading || userInfo.isLoading) {
-    return <DetailLoding />;
-  }
-
-  // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
-  if (!userInfo.isLoading && !userInfo.isLogin) {
-    return <NotAuth />;
-  }
-
-  // エラー
-  if (error) {
-    console.error(error);
-    return <Error errorMessage={error?.message} />;
-  }
-
-  // タスクの作成者が自分でない場合 初期値にundefinedが入ってくるため防止
-  if (data?.task?.createUser.id && data.task.createUser.id !== userInfo.userId) {
-    return <Error errorMessage="自分のタスクではありません。" />;
-  }
-
   // 正常時
-  return <DetailData {...data} />;
+  return (
+    <>
+      <NextSeo title={data?.task?.title ?? "タスクの詳細"} />
+
+      {isDataLoading || userInfo.isLoading ? (
+        // タスクのデータとユーザー情報のローディング
+        <DetailLoding />
+      ) : !userInfo.isLoading && !userInfo.isLogin ? (
+        // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
+        <NotAuth />
+      ) : error ? (
+        // エラー
+        <Error error={error} displayMessage="自分のタスクではありません。" />
+      ) : data?.task?.createUser.id && data.task.createUser.id !== userInfo.userId ? (
+        // タスクの作成者が自分でない場合 初期値にundefinedが入ってくるため防止
+        <Error displayMessage="自分のタスクではありません。" />
+      ) : (
+        <DetailData {...data} />
+      )}
+    </>
+  );
 };
 
 export default TaskIdPage;

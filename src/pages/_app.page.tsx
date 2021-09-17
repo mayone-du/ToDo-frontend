@@ -41,6 +41,7 @@ const App = (props: CustomAppProps) => {
         <ThemeProvider attribute="class" defaultTheme="light">
           <DefaultSeo
             title={"Template"}
+            titleTemplate={"%s | サイトの名前"}
             description="Template Repo"
             additionalMetaTags={[{ property: "", content: "" }]}
             additionalLinkTags={[

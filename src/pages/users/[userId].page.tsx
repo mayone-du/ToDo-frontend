@@ -1,5 +1,6 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage, GetStaticPaths, GetStaticProps } from "next";
+import { NextSeo } from "next-seo";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { initializeApollo } from "src/graphql/apollo/client";
 import type {
@@ -48,19 +49,27 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 const UserIdPage: CustomNextPage<GetUserQuery | undefined> = (props) => {
+  const PAGE_NAME =
+    (props.user?.relatedUser?.profileName ?? props.user?.username ?? "") + "のプロフィール";
+
   const userInfo = useReactiveVar(userInfoVar);
 
-  // ユーザー情報のローディング時
-  if (userInfo.isLoading) {
-    return <div className="bg-blue-500">Loading...</div>;
-  }
+  return (
+    <>
+      <NextSeo title={PAGE_NAME} />
 
-  // 自分のユーザーIDだった場合
-  if (userInfo.userId === props.user?.id) {
-    return <MyUserInfo {...props} />;
-  }
-
-  return <DetailData {...props} />;
+      {userInfo.isLoading ? (
+        // ユーザー情報のローディング
+        <div>Loading...</div>
+      ) : userInfo.userId === props.user?.id ? (
+        // 自分のIDの時
+        <MyUserInfo {...props} />
+      ) : (
+        // それ以外の時
+        <DetailData {...props} />
+      )}
+    </>
+  );
 };
 
 export default UserIdPage;
