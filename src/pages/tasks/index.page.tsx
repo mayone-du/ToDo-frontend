@@ -1,12 +1,13 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
+import { NextSeo } from "next-seo";
 import { useEffect } from "react";
 import { Error } from "src/components/Error";
 import { NotAuth } from "src/components/NotAuth";
+import { UserLoading } from "src/components/UserLoading";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { useGetMyAllTasksLazyQuery } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
-// import { useValidateAuth } from "src/libs/hooks/useValidateAuth";
 import { ListData } from "src/pages/tasks/components/ListData";
 import { ListLoading } from "src/pages/tasks/components/ListLoading";
 
@@ -22,28 +23,30 @@ const TasksIndexPage: CustomNextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
-  // ユーザー情報の取得中
-  if (userInfo.isLoading) {
-    return <div className="bg-red-600">Loading</div>;
-  }
-
-  // データのローディング
-  if (isDataLoading) {
-    return <ListLoading />;
-  }
-
-  // エラー
-  if (error) {
-    return <Error />;
-  }
-
-  // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
-  if (!userInfo.isLoading && !userInfo.isLogin) {
-    return <NotAuth />;
-  }
-
   // 正常時
-  return <ListData {...data} />;
+  return (
+    <>
+      <NextSeo title="タスク一覧" />
+
+      {/* データ状態によってコンポーネントを出し分け */}
+      {userInfo.isLoading ? (
+        // ユーザー情報の取得中
+        <UserLoading />
+      ) : isDataLoading ? (
+        // タスクの読込中
+        <ListLoading />
+      ) : !userInfo.isLoading && !userInfo.isLogin ? (
+        // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
+        <NotAuth />
+      ) : error ? (
+        // エラー
+        <Error error={error} />
+      ) : (
+        // 通常時
+        <ListData {...data} />
+      )}
+    </>
+  );
 };
 
 export default TasksIndexPage;

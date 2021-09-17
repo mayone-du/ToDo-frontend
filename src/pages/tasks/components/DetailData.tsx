@@ -38,11 +38,9 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
       const { errors } = await deleteTaskMutation({
         variables: { id: props?.task?.id ?? "" },
       });
-
       if (errors) {
         throw errors;
       }
-
       toast.success("削除しました。");
       router.push("/tasks");
     } catch (error) {
