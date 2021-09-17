@@ -44,7 +44,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
   });
 
-  return { props: data };
+  return { props: data, revalidate: 60 /* 60sec */ };
 };
 
 const UserIdPage: CustomNextPage<GetUserQuery | undefined> = (props) => {

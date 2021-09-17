@@ -27,8 +27,8 @@ export type Scalars = {
 };
 
 export type CreateProfileMutationInput = {
-  userId: Scalars['ID'];
   profileName: Scalars['String'];
+  profileImage?: Maybe<Scalars['Upload']>;
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
@@ -127,15 +127,34 @@ export type PageInfo = {
   endCursor?: Maybe<Scalars['String']>;
 };
 
-export type ProfileNode = {
+export type ProfileNode = Node & {
   __typename?: 'ProfileNode';
+  /** The ID of the object. */
   id: Scalars['ID'];
   relatedUser: UserNode;
   profileName: Scalars['String'];
+  profileImage?: Maybe<Scalars['String']>;
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
   websiteUrl?: Maybe<Scalars['String']>;
+};
+
+export type ProfileNodeConnection = {
+  __typename?: 'ProfileNodeConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<ProfileNodeEdge>>;
+};
+
+/** A Relay edge containing a `ProfileNode` and its cursor. */
+export type ProfileNodeEdge = {
+  __typename?: 'ProfileNodeEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<ProfileNode>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
 };
 
 export type Query = {
@@ -145,6 +164,7 @@ export type Query = {
   myUserInfo?: Maybe<UserNode>;
   profile?: Maybe<ProfileNode>;
   myProfile?: Maybe<ProfileNode>;
+  allProfiles?: Maybe<ProfileNodeConnection>;
   task?: Maybe<TaskNode>;
   myAllTasks?: Maybe<TaskNodeConnection>;
 };
@@ -172,6 +192,23 @@ export type QueryAllUsersArgs = {
 
 export type QueryProfileArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryAllProfilesArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  profileName?: Maybe<Scalars['String']>;
+  profileName_Icontains?: Maybe<Scalars['String']>;
+  selfIntroduction?: Maybe<Scalars['String']>;
+  selfIntroduction_Icontains?: Maybe<Scalars['String']>;
+  githubUsername?: Maybe<Scalars['String']>;
+  githubUsername_Icontains?: Maybe<Scalars['String']>;
+  twitterUsername?: Maybe<Scalars['String']>;
+  twitterUsername_Icontains?: Maybe<Scalars['String']>;
 };
 
 
@@ -279,6 +316,7 @@ export type TaskNodeEdge = {
 export type UpdateProfileMutationInput = {
   id: Scalars['ID'];
   profileName: Scalars['String'];
+  profileImage?: Maybe<Scalars['Upload']>;
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
@@ -366,6 +404,22 @@ export type UserNodeEdge = {
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
 };
+
+export type CreateProfileMutationVariables = Exact<{
+  profileName: Scalars['String'];
+}>;
+
+
+export type CreateProfileMutation = (
+  { __typename?: 'Mutation' }
+  & { createProfile?: Maybe<(
+    { __typename?: 'CreateProfileMutationPayload' }
+    & { profile?: Maybe<(
+      { __typename?: 'ProfileNode' }
+      & Pick<ProfileNode, 'id' | 'profileName'>
+    )> }
+  )> }
+);
 
 export type SocialAuthMutationVariables = Exact<{
   accessToken: Scalars['String'];
@@ -519,7 +573,7 @@ export type GetUserQuery = (
     & Pick<UserNode, 'id' | 'username' | 'email' | 'firstName' | 'lastName'>
     & { relatedUser?: Maybe<(
       { __typename?: 'ProfileNode' }
-      & Pick<ProfileNode, 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
+      & Pick<ProfileNode, 'id' | 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
     )> }
   )> }
 );
@@ -535,6 +589,42 @@ export type CountSecondsSubscription = (
 );
 
 
+export const CreateProfileDocument = gql`
+    mutation CreateProfile($profileName: String!) {
+  createProfile(input: {profileName: $profileName}) {
+    profile {
+      id
+      profileName
+    }
+  }
+}
+    `;
+export type CreateProfileMutationFn = Apollo.MutationFunction<CreateProfileMutation, CreateProfileMutationVariables>;
+
+/**
+ * __useCreateProfileMutation__
+ *
+ * To run a mutation, you first call `useCreateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProfileMutation, { data, loading, error }] = useCreateProfileMutation({
+ *   variables: {
+ *      profileName: // value for 'profileName'
+ *   },
+ * });
+ */
+export function useCreateProfileMutation(baseOptions?: Apollo.MutationHookOptions<CreateProfileMutation, CreateProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateProfileMutation, CreateProfileMutationVariables>(CreateProfileDocument, options);
+      }
+export type CreateProfileMutationHookResult = ReturnType<typeof useCreateProfileMutation>;
+export type CreateProfileMutationResult = Apollo.MutationResult<CreateProfileMutation>;
+export type CreateProfileMutationOptions = Apollo.BaseMutationOptions<CreateProfileMutation, CreateProfileMutationVariables>;
 export const SocialAuthDocument = gql`
     mutation SocialAuth($accessToken: String!) {
   socialAuth(provider: "google-oauth2", accessToken: $accessToken) {
@@ -871,6 +961,7 @@ export const GetUserDocument = gql`
     firstName
     lastName
     relatedUser {
+      id
       profileName
       selfIntroduction
       githubUsername
