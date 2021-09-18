@@ -1,9 +1,12 @@
 import router from "next/router";
 import toast from "react-hot-toast";
 import type { GetTaskQuery } from "src/graphql/schemas/schema";
-import { GetTaskDocument } from "src/graphql/schemas/schema";
-import { useUpdateTaskMutation } from "src/graphql/schemas/schema";
-import { useDeleteTaskMutation } from "src/graphql/schemas/schema";
+import {
+  GetMyAllTasksDocument,
+  GetTaskDocument,
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "src/graphql/schemas/schema";
 import { UpdateForm } from "src/pages/tasks/components/UpdateForm";
 import { MEDIAFILE_API_ENDPOINT } from "src/utils/API_ENDPOINTS";
 
@@ -37,6 +40,7 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
     try {
       const { errors } = await deleteTaskMutation({
         variables: { id: props?.task?.id ?? "" },
+        refetchQueries: [{ query: GetMyAllTasksDocument }],
       });
       if (errors) {
         throw errors;

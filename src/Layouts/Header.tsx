@@ -35,7 +35,7 @@ export const Header: React.VFC = memo(() => {
             <a className="block text-lg font-bold">LOGO</a>
           </Link>
         </div>
-        <ul className="flex items-center">
+        <ul className="flex justify-between items-center">
           {/* ヘッダーメニューを事前に定義し、mapで回して表示 */}
           {HEADER_MENUS.map((menu, index) => {
             return (
@@ -48,12 +48,12 @@ export const Header: React.VFC = memo(() => {
           })}
           {/* ローディング時の場合 */}
           {userInfo.isLoading && (
-            <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>
+            <div className="ml-2 w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>
           )}
-          <li className="ml-2">
-            {/* ログイン状態によって変更 */}
-            {/* ログイン時の場合 */}
-            {!userInfo.isLoading && userInfo.isLogin && (
+          {/* ログイン状態によって変更 */}
+          {/* ログイン時の場合 */}
+          {!userInfo.isLoading && userInfo.isLogin && (
+            <li className="ml-2">
               <div className="top-16 mx-auto w-full">
                 <Popover className="relative">
                   {({ open: isOpen }) => {
@@ -113,9 +113,11 @@ export const Header: React.VFC = memo(() => {
                   }}
                 </Popover>
               </div>
-            )}
-            {/* 非ログイン時の場合 */}
-            {!userInfo.isLoading && !userInfo.isLogin && (
+            </li>
+          )}
+          {/* 非ログイン時の場合 */}
+          {!userInfo.isLoading && !userInfo.isLogin && (
+            <li className="ml-2">
               <div>
                 <button
                   onClick={handleOpenModal}
@@ -125,8 +127,8 @@ export const Header: React.VFC = memo(() => {
                 </button>
                 {renderModal()}
               </div>
-            )}
-          </li>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

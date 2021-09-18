@@ -1,12 +1,16 @@
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useCreateProfileMutation } from "src/graphql/schemas/schema";
+import { GetUserDocument, useCreateProfileMutation } from "src/graphql/schemas/schema";
 
 type ProfileInputs = {
   profileName: string;
 };
 
-export const ProfileForm: React.VFC = () => {
+type Props = {
+  id: string;
+};
+
+export const ProfileForm: React.VFC<Props> = (props) => {
   const [createProfile, { loading: isLoading }] = useCreateProfileMutation();
 
   const {
@@ -24,6 +28,14 @@ export const ProfileForm: React.VFC = () => {
         variables: {
           profileName: formData.profileName,
         },
+        refetchQueries: [
+          {
+            query: GetUserDocument,
+            variables: {
+              id: props.id,
+            },
+          },
+        ],
       });
       // エラーがあれば例外処理を発生
       if (errors) {
