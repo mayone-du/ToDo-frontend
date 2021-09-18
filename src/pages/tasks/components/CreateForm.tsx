@@ -40,22 +40,24 @@ export const CreateForm: React.VFC = () => {
 
   return (
     <form onSubmit={handleSubmit(handleCreateTask)}>
-      <input
-        type="text"
-        className="p-2 rounded border"
-        placeholder="タスクのタイトル"
-        {...register("taskTitle", { required: true, maxLength: 20 })}
-      />
-      {errors.taskTitle && (
-        <p className="pb-4 text-sm text-gray-500">
-          {errors.taskTitle.type === "required" ? "必須です。" : "最大20文字です。"}
-        </p>
-      )}
+      <div>
+        <input
+          type="text"
+          className="block p-2 mx-auto mt-8 rounded border"
+          placeholder="タスクのタイトル"
+          {...register("taskTitle", { required: true, maxLength: 20 })}
+        />
+        {errors.taskTitle && (
+          <p className="pb-4 text-sm text-gray-500">
+            {errors.taskTitle.type === "required" ? "必須です。" : "最大20文字です。"}
+          </p>
+        )}
+      </div>
       {/* mutationのローディング中は無効化する */}
       <button
         type="submit"
         disabled={isLoading}
-        className="p-2 disabled:bg-gray-500 rounded border"
+        className="block py-2 px-4 my-4 mx-auto disabled:bg-gray-500 rounded border"
       >
         作成
       </button>

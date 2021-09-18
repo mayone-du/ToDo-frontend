@@ -28,7 +28,7 @@ export const Header: React.VFC = memo(() => {
   ];
 
   return (
-    <header className="py-2 md:px-60 lg:px-72">
+    <header className="py-2 md:px-60 lg:px-72 border-b">
       <nav className="flex justify-between items-center">
         <div>
           <Link href="/">
@@ -69,7 +69,7 @@ export const Header: React.VFC = memo(() => {
                             backgroundPosition: "center",
                           }}
                         ></Popover.Button>
-                        <Popover.Panel className="absolute -right-2 z-10 mt-4 w-72 bg-white dark:bg-black rounded border shadow-md transform">
+                        <Popover.Panel className="absolute right-0 z-10 mt-4 w-72 bg-white dark:bg-black rounded border shadow-md transform">
                           <ul>
                             {/* プロフィールのリンク */}
                             <li>

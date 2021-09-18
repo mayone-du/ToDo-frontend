@@ -14,7 +14,7 @@ export const ListData: React.VFC<GetMyAllTasksQuery | undefined> = (props) => {
             task?.node && (
               <li key={index} className="flex justify-between items-center border-b">
                 <Link href={`/tasks/${task.node.id}`}>
-                  <a className={`block underline ${task.node.isDone && "bg-blue-200"}`}>
+                  <a className={`block underline p-2 text-lg ${task.node.isDone && "bg-blue-200"}`}>
                     {task.node.title}
                   </a>
                 </Link>

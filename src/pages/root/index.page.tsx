@@ -1,6 +1,6 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
-import { NextSeo } from "next-seo";
+import { BreadcrumbJsonLd, NextSeo } from "next-seo";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
 import { NotAuth } from "src/components/NotAuth";
@@ -20,6 +20,15 @@ const IndexPage: CustomNextPage = () => {
   return (
     <>
       <NextSeo title={PAGE_NAME} />
+      <BreadcrumbJsonLd
+        itemListElements={[
+          {
+            position: 1,
+            name: "HOME",
+            item: "http://localhost:3000/",
+          },
+        ]}
+      />
 
       {userInfo.isLoading ? (
         // ユーザー情報のローディング

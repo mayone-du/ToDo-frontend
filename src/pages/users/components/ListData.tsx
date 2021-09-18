@@ -10,7 +10,7 @@ export const ListData: React.VFC<GetAllUsersQuery | undefined> = (props) => {
           user?.node && (
             <li key={index} className="p-4 w-1/3">
               <Link href={`/users/${user.node.id}`}>
-                <a className="block rounded-md border shadow-sm">
+                <a className="block p-4 rounded-md border shadow-sm">
                   <div>{user?.node?.email}</div>
                   <div>{user.node.relatedUser?.profileName ?? "ProfileName"}</div>
                 </a>

@@ -13,9 +13,7 @@ import { ListLoading } from "src/pages/tasks/components/ListLoading";
 
 const TasksIndexPage: CustomNextPage = () => {
   const userInfo = useReactiveVar(userInfoVar);
-  const [query, { data, loading: isDataLoading, error }] = useGetMyAllTasksLazyQuery({
-    fetchPolicy: "network-only",
-  });
+  const [query, { data, loading: isDataLoading, error }] = useGetMyAllTasksLazyQuery();
 
   useEffect(() => {
     // ログイン済みである場合のみクエリを実行
