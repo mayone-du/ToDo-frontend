@@ -26,6 +26,7 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
 
   // タスクの更新用関数
   const handleUpdateTask = async (formData: TaskInputs) => {
+    const toastId = toast.loading("更新中");
     try {
       const { errors } = await updateTaskMutation({
         variables: {
@@ -36,10 +37,10 @@ export const UpdateForm: React.VFC<GetTaskQuery | undefined> = (props) => {
       if (errors) {
         throw errors;
       }
-      toast.success("更新しました。");
+      toast.success("更新しました", { id: toastId });
     } catch (error) {
-      toast.error("失敗しました。");
       console.error(error);
+      toast.error("失敗しました", { id: toastId });
     }
   };
 

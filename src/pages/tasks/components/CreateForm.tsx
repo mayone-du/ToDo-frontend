@@ -18,6 +18,7 @@ export const CreateForm: React.VFC = () => {
 
   // タスクの作成用関数
   const handleCreateTask = async (formData: TaskInputs) => {
+    const toastId = toast.loading("loading");
     try {
       // タスクを作成したらタスクの一覧を再取得
       const { errors } = await createTaskMutation({
@@ -31,10 +32,10 @@ export const CreateForm: React.VFC = () => {
         throw errors;
       }
       setValue("taskTitle", "");
-      toast.success("送信");
+      toast.success("送信", { id: toastId });
     } catch (error) {
       console.error(error);
-      toast.error("失敗");
+      toast.error("失敗", { id: toastId });
     }
   };
 

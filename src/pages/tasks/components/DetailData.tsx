@@ -18,6 +18,7 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
 
   // taskを完了済みに更新
   const handleDoneTask = async () => {
+    const toastId = toast.loading("更新中");
     try {
       const { errors } = await updateTaskMutation({
         variables: {
@@ -28,10 +29,10 @@ export const DetailData: React.VFC<GetTaskQuery | undefined> = (props) => {
       if (errors) {
         throw errors;
       }
-      toast.success("タスクを完了しました");
+      toast.success("タスクを完了しました", { id: toastId });
     } catch (error) {
-      toast.error("エラーが発生しました");
       console.error(error);
+      toast.error("エラーが発生しました", { id: toastId });
     }
   };
 

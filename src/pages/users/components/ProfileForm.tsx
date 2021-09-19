@@ -22,6 +22,7 @@ export const ProfileForm: React.VFC<Props> = (props) => {
 
   // プロフィールの作成用関数
   const handleCreateTask = async (formData: ProfileInputs) => {
+    const toastId = toast.loading("作成中");
     try {
       // プロフィールを作成したらこのユーザーの情報を再取得
       const { errors } = await createProfile({
@@ -42,10 +43,10 @@ export const ProfileForm: React.VFC<Props> = (props) => {
         throw errors;
       }
       setValue("profileName", "");
-      toast.success("送信");
+      toast.success("送信", { id: toastId });
     } catch (error) {
       console.error(error);
-      toast.error("失敗");
+      toast.error("失敗", { id: toastId });
     }
   };
 
