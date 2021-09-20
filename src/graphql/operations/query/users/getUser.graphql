@@ -12,6 +12,14 @@ query GetUser($id: ID!) {
       githubUsername
       twitterUsername
       websiteUrl
+      followingUsers {
+        edges {
+          node {
+            id
+            email
+          }
+        }
+      }
     }
   }
 }

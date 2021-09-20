@@ -1,5 +1,6 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
+import { signOut } from "next-auth/client";
 import { BreadcrumbJsonLd, NextSeo } from "next-seo";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
@@ -29,7 +30,6 @@ const IndexPage: CustomNextPage = () => {
           },
         ]}
       />
-
       {userInfo.isLoading ? (
         // ユーザー情報のローディング
         <UserLoading />
@@ -44,6 +44,10 @@ const IndexPage: CustomNextPage = () => {
           </button>
         </div>
       )}
+      {/* eslint-disable-next-line react/jsx-handler-names */}
+      <button onClick={signOut} className="p-2 border">
+        signout
+      </button>
     </>
   );
 };

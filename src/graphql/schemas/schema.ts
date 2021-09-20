@@ -138,6 +138,22 @@ export type ProfileNode = Node & {
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
   websiteUrl?: Maybe<Scalars['String']>;
+  followingUsers: UserNodeConnection;
+};
+
+
+export type ProfileNodeFollowingUsersArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  username?: Maybe<Scalars['String']>;
+  username_Icontains?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  email_Icontains?: Maybe<Scalars['String']>;
+  isStaff?: Maybe<Scalars['Boolean']>;
+  isSuperuser?: Maybe<Scalars['Boolean']>;
 };
 
 export type ProfileNodeConnection = {
@@ -320,6 +336,7 @@ export type UpdateProfileMutationInput = {
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
+  followingUsers?: Maybe<Array<Maybe<Scalars['ID']>>>;
   clientMutationId?: Maybe<Scalars['String']>;
 };
 
@@ -360,8 +377,26 @@ export type UserNode = Node & {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   relatedUser?: Maybe<ProfileNode>;
+  followingUsers: ProfileNodeConnection;
   createUser: TaskNodeConnection;
   socialAuth: SocialNodeConnection;
+};
+
+
+export type UserNodeFollowingUsersArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  profileName?: Maybe<Scalars['String']>;
+  profileName_Icontains?: Maybe<Scalars['String']>;
+  selfIntroduction?: Maybe<Scalars['String']>;
+  selfIntroduction_Icontains?: Maybe<Scalars['String']>;
+  githubUsername?: Maybe<Scalars['String']>;
+  githubUsername_Icontains?: Maybe<Scalars['String']>;
+  twitterUsername?: Maybe<Scalars['String']>;
+  twitterUsername_Icontains?: Maybe<Scalars['String']>;
 };
 
 
@@ -574,6 +609,16 @@ export type GetUserQuery = (
     & { relatedUser?: Maybe<(
       { __typename?: 'ProfileNode' }
       & Pick<ProfileNode, 'id' | 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
+      & { followingUsers: (
+        { __typename?: 'UserNodeConnection' }
+        & { edges: Array<Maybe<(
+          { __typename?: 'UserNodeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'UserNode' }
+            & Pick<UserNode, 'id' | 'email'>
+          )> }
+        )>> }
+      ) }
     )> }
   )> }
 );
@@ -967,6 +1012,14 @@ export const GetUserDocument = gql`
       githubUsername
       twitterUsername
       websiteUrl
+      followingUsers {
+        edges {
+          node {
+            id
+            email
+          }
+        }
+      }
     }
   }
 }
