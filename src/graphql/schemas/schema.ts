@@ -139,6 +139,8 @@ export type ProfileNode = Node & {
   twitterUsername?: Maybe<Scalars['String']>;
   websiteUrl?: Maybe<Scalars['String']>;
   followingUsers: UserNodeConnection;
+  followingUsersCount?: Maybe<Scalars['Int']>;
+  followedUsersCount?: Maybe<Scalars['Int']>;
 };
 
 
@@ -606,9 +608,22 @@ export type GetUserQuery = (
   & { user?: Maybe<(
     { __typename?: 'UserNode' }
     & Pick<UserNode, 'id' | 'username' | 'email' | 'firstName' | 'lastName'>
-    & { relatedUser?: Maybe<(
+    & { followingUsers: (
+      { __typename?: 'ProfileNodeConnection' }
+      & { edges: Array<Maybe<(
+        { __typename?: 'ProfileNodeEdge' }
+        & { node?: Maybe<(
+          { __typename?: 'ProfileNode' }
+          & Pick<ProfileNode, 'id' | 'profileName'>
+          & { relatedUser: (
+            { __typename?: 'UserNode' }
+            & Pick<UserNode, 'id' | 'email'>
+          ) }
+        )> }
+      )>> }
+    ), relatedUser?: Maybe<(
       { __typename?: 'ProfileNode' }
-      & Pick<ProfileNode, 'id' | 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl'>
+      & Pick<ProfileNode, 'id' | 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl' | 'followedUsersCount' | 'followingUsersCount'>
       & { followingUsers: (
         { __typename?: 'UserNodeConnection' }
         & { edges: Array<Maybe<(
@@ -1005,6 +1020,18 @@ export const GetUserDocument = gql`
     email
     firstName
     lastName
+    followingUsers {
+      edges {
+        node {
+          id
+          profileName
+          relatedUser {
+            id
+            email
+          }
+        }
+      }
+    }
     relatedUser {
       id
       profileName
@@ -1012,6 +1039,8 @@ export const GetUserDocument = gql`
       githubUsername
       twitterUsername
       websiteUrl
+      followedUsersCount
+      followingUsersCount
       followingUsers {
         edges {
           node {

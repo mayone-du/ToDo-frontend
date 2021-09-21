@@ -5,6 +5,18 @@ query GetUser($id: ID!) {
     email
     firstName
     lastName
+    followingUsers {
+      edges {
+        node {
+          id
+          profileName
+          relatedUser {
+            id
+            email
+          }
+        }
+      }
+    }
     relatedUser {
       id
       profileName
@@ -12,6 +24,8 @@ query GetUser($id: ID!) {
       githubUsername
       twitterUsername
       websiteUrl
+      followedUsersCount
+      followingUsersCount
       followingUsers {
         edges {
           node {
