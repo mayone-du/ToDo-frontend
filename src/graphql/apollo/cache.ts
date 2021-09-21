@@ -6,10 +6,13 @@ export const cache = new InMemoryCache();
 export const idTokenVar = makeVar("");
 
 // ユーザー情報のローディング・ログイン・IDの状態をグローバル管理するためのステート
-export const InitialUserInfo = {
+const InitialUserInfo = {
   isLogin: false,
   isLoading: true,
   userId: "",
   profileId: "",
 };
 export const userInfoVar = makeVar(InitialUserInfo);
+
+// 認証モーダルの開閉用ステート
+export const isOpenAuthModalVar = makeVar(false);

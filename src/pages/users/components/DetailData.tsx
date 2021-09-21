@@ -1,23 +1,13 @@
 import { useReactiveVar } from "@apollo/client";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import toast from "react-hot-toast";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import type { GetUserQuery } from "src/graphql/schemas/schema";
-import { useGetUserLazyQuery } from "src/graphql/schemas/schema";
-import { useAuthModal } from "src/libs/hooks/useAuthModal";
 import { useFollow } from "src/pages/users/hooks/useFollow";
 
 export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
   const userInfo = useReactiveVar(userInfoVar);
   const { handleFollow, isFollowLoading } = useFollow();
-  const { handleOpenModal, renderModal } = useAuthModal();
-  const [query, { data: myUserData }] = useGetUserLazyQuery({ variables: { id: userInfo.userId } });
-
-  useEffect(() => {
-    userInfo.isLogin && query();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo]);
-
   // 自分が対象のユーザー（現在のページのユーザー）をフォローしているかどうか
   const isFollowing =
     props?.user?.followingUsers.edges
@@ -28,19 +18,7 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
   // フォローするボタンを押した時
   const handleClickFollow = useCallback(async () => {
-    if (!userInfo.isLogin) {
-      return handleOpenModal();
-    }
-
-    // 自分がフォローしているユーザーを取得し、ユーザーのIDを配列にセットして更新
-    const followingUserIds: string[] = [];
-    myUserData?.user?.relatedUser?.followingUsers.edges.forEach((user) => {
-      user?.node?.id && followingUserIds.push(user.node.id);
-    }) ?? [];
-    followingUserIds.push(props?.user?.id ?? "");
-
-    await handleFollow(userInfo.profileId, followingUserIds);
-    toast.success("フォローしました");
+    await handleFollow(props?.user?.id ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,7 +30,6 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
   return (
     <div>
-      {renderModal()}
       <h2>自分以外のユーザー</h2>
       <p>{props?.user?.email}</p>
       <p>{props?.user?.username}</p>
