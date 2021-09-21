@@ -634,7 +634,11 @@ export type GetMyUserInfoQuery = (
   { __typename?: 'Query' }
   & { myUserInfo?: Maybe<(
     { __typename?: 'UserNode' }
-    & Pick<UserNode, 'id' | 'email' | 'username'>
+    & Pick<UserNode, 'id'>
+    & { relatedUser?: Maybe<(
+      { __typename?: 'ProfileNode' }
+      & Pick<ProfileNode, 'id'>
+    )> }
   )> }
 );
 
@@ -1099,8 +1103,9 @@ export const GetMyUserInfoDocument = gql`
     query GetMyUserInfo {
   myUserInfo {
     id
-    email
-    username
+    relatedUser {
+      id
+    }
   }
 }
     `;

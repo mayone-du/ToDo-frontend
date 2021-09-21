@@ -2,7 +2,7 @@ import { useReactiveVar } from "@apollo/client";
 import type { NextPage } from "next";
 import { getSession } from "next-auth/client";
 import { useEffect } from "react";
-import { idTokenVar, userInfoVar } from "src/graphql/apollo/cache";
+import { idTokenVar, InitialUserInfo, userInfoVar } from "src/graphql/apollo/cache";
 import { initializeApollo } from "src/graphql/apollo/client";
 import type { GetMyUserInfoQuery, GetMyUserInfoQueryVariables } from "src/graphql/schemas/schema";
 import { GetMyUserInfoDocument } from "src/graphql/schemas/schema";
@@ -37,16 +37,13 @@ export const Layout = (page: NextPage) => {
             isLoading: false,
             isLogin: true,
             userId: data.myUserInfo?.id ?? "",
+            profileId: data.myUserInfo?.relatedUser?.id ?? "",
           });
           return;
         }
 
-        // グローバル管理しているユーザー情報を更新
-        userInfoVar({
-          userId: "",
-          isLoading: false,
-          isLogin: false,
-        });
+        // グローバル管理しているユーザー情報を初期値に更新
+        userInfoVar(InitialUserInfo);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

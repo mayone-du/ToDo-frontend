@@ -1,22 +1,53 @@
 import { useReactiveVar } from "@apollo/client";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import toast from "react-hot-toast";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import type { GetUserQuery } from "src/graphql/schemas/schema";
+import { useGetUserLazyQuery } from "src/graphql/schemas/schema";
 import { useAuthModal } from "src/libs/hooks/useAuthModal";
 import { useFollow } from "src/pages/users/hooks/useFollow";
 
 export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
   const userInfo = useReactiveVar(userInfoVar);
-
-  const { handleFollow } = useFollow();
+  const { handleFollow, isFollowLoading } = useFollow();
   const { handleOpenModal, renderModal } = useAuthModal();
+  const [query, { data: myUserData }] = useGetUserLazyQuery({ variables: { id: userInfo.userId } });
 
+  useEffect(() => {
+    userInfo.isLogin && query();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userInfo]);
+
+  // 自分が対象のユーザー（現在のページのユーザー）をフォローしているかどうか
+  const isFollowing =
+    props?.user?.followingUsers.edges
+      .map((user) => {
+        return user?.node?.relatedUser.id === userInfo.userId;
+      })
+      .includes(true) ?? false;
+
+  // フォローするボタンを押した時
   const handleClickFollow = useCallback(async () => {
     if (!userInfo.isLogin) {
       return handleOpenModal();
     }
-    await handleFollow();
+
+    // 自分がフォローしているユーザーを取得し、ユーザーのIDを配列にセットして更新
+    const followingUserIds: string[] = [];
+    myUserData?.user?.relatedUser?.followingUsers.edges.forEach((user) => {
+      user?.node?.id && followingUserIds.push(user.node.id);
+    }) ?? [];
+    followingUserIds.push(props?.user?.id ?? "");
+
+    await handleFollow(userInfo.profileId, followingUserIds);
+    toast.success("フォローしました");
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // フォローを外すボタンを押した時
+  const handleClickUnFollow = useCallback(async () => {
+    toast.success("フォローを外しました");
+    return;
   }, []);
 
   return (
@@ -73,15 +104,23 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
         {/* このページのユーザーのことを、フォローしているユーザーの中に自分が含まれるか */}
         {/* このページのユーザーのことを、自分がフォローしているか */}
-        <button onClick={handleClickFollow} className="block p-2 mx-auto rounded border">
-          {props?.user?.followingUsers.edges
-            .map((user) => {
-              return user?.node?.relatedUser.id === userInfo.userId;
-            })
-            .includes(true)
-            ? "フォローを外す"
-            : "フォローする"}
-        </button>
+        {isFollowing ? (
+          <button
+            onClick={handleClickUnFollow}
+            disabled={isFollowLoading}
+            className="block p-2 mx-auto rounded border"
+          >
+            フォローを外す
+          </button>
+        ) : (
+          <button
+            onClick={handleClickFollow}
+            disabled={isFollowLoading}
+            className="block p-2 mx-auto rounded border"
+          >
+            フォローする
+          </button>
+        )}
       </div>
     </div>
   );
