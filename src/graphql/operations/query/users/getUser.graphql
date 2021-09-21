@@ -8,7 +8,6 @@ query GetUser($id: ID!) {
     followingUsers {
       edges {
         node {
-          id
           profileName
           relatedUser {
             id

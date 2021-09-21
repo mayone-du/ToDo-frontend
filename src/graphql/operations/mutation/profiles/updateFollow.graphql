@@ -1,0 +1,7 @@
+mutation UpdateFollow($id: ID!, $followingUsers: [ID!]) {
+  updateProfile(input: { id: $id, followingUsers: $followingUsers }) {
+    profile {
+      id
+    }
+  }
+}

@@ -1,0 +1,25 @@
+mutation UpdateProfile(
+  $id: ID!
+  $profileName: String
+  $selfIntroduction: String
+  $profileImage: Upload
+  $githubUsername: String
+  $twitterUsername: String
+  $websiteUrl: String
+) {
+  updateProfile(
+    input: {
+      id: $id
+      profileName: $profileName
+      selfIntroduction: $selfIntroduction
+      profileImage: $profileImage
+      githubUsername: $githubUsername
+      twitterUsername: $twitterUsername
+      websiteUrl: $websiteUrl
+    }
+  ) {
+    profile {
+      id
+    }
+  }
+}
