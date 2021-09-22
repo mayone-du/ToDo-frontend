@@ -1,13 +1,12 @@
 import { useReactiveVar } from "@apollo/client";
 import { useCallback } from "react";
-import toast from "react-hot-toast";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import type { GetUserQuery } from "src/graphql/schemas/schema";
 import { useFollow } from "src/pages/users/hooks/useFollow";
 
 export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
   const userInfo = useReactiveVar(userInfoVar);
-  const { handleFollow, isFollowLoading } = useFollow();
+  const { handleFollow, handleUnFollow, isFollowsLoading } = useFollow();
   // 自分が対象のユーザー（現在のページのユーザー）をフォローしているかどうか
   const isFollowing =
     props?.user?.followingUsers.edges
@@ -24,8 +23,8 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
   // フォローを外すボタンを押した時
   const handleClickUnFollow = useCallback(async () => {
-    toast.success("フォローを外しました");
-    return;
+    await handleUnFollow(props?.user?.id ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -84,7 +83,7 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
         {isFollowing ? (
           <button
             onClick={handleClickUnFollow}
-            disabled={isFollowLoading}
+            disabled={isFollowsLoading}
             className="block p-2 mx-auto rounded border"
           >
             フォローを外す
@@ -92,7 +91,7 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
         ) : (
           <button
             onClick={handleClickFollow}
-            disabled={isFollowLoading}
+            disabled={isFollowsLoading}
             className="block p-2 mx-auto rounded border"
           >
             フォローする
