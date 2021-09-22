@@ -2,8 +2,7 @@ import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { userInfoVar } from "src/graphql/apollo/cache";
-import { useUpdateFollowMutation } from "src/graphql/schemas/schema";
-import { useGetUserLazyQuery } from "src/graphql/schemas/schema";
+import { useGetUserLazyQuery, useUpdateFollowMutation } from "src/graphql/schemas/schema";
 import { useAuthModal } from "src/libs/hooks/useAuthModal";
 
 export const useFollow = () => {
@@ -37,7 +36,6 @@ export const useFollow = () => {
 
       const { errors } = await mutation({
         variables: {
-          id: userInfo.profileId,
           followingUsers: followingUserIds,
         },
       });
@@ -64,7 +62,6 @@ export const useFollow = () => {
       });
       const { errors } = await mutation({
         variables: {
-          id: userInfo.profileId,
           followingUsers: deletedUserIds,
         },
       });

@@ -1,7 +1,7 @@
 mutation UpdateProfile(
-  $id: ID!
   $profileName: String
   $selfIntroduction: String
+  $googleImageUrl: String
   $profileImage: Upload
   $githubUsername: String
   $twitterUsername: String
@@ -9,9 +9,9 @@ mutation UpdateProfile(
 ) {
   updateProfile(
     input: {
-      id: $id
       profileName: $profileName
       selfIntroduction: $selfIntroduction
+      googleImageUrl: $googleImageUrl
       profileImage: $profileImage
       githubUsername: $githubUsername
       twitterUsername: $twitterUsername

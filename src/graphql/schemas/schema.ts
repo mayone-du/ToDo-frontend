@@ -133,6 +133,7 @@ export type ProfileNode = Node & {
   id: Scalars['ID'];
   relatedUser: UserNode;
   profileName: Scalars['String'];
+  googleImageUrl: Scalars['String'];
   profileImage?: Maybe<Scalars['String']>;
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
@@ -332,8 +333,8 @@ export type TaskNodeEdge = {
 };
 
 export type UpdateProfileMutationInput = {
-  id: Scalars['ID'];
   profileName?: Maybe<Scalars['String']>;
+  googleImageUrl?: Maybe<Scalars['String']>;
   profileImage?: Maybe<Scalars['Upload']>;
   selfIntroduction?: Maybe<Scalars['String']>;
   githubUsername?: Maybe<Scalars['String']>;
@@ -460,7 +461,6 @@ export type CreateProfileMutation = (
 );
 
 export type UpdateFollowMutationVariables = Exact<{
-  id: Scalars['ID'];
   followingUsers?: Maybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
 
@@ -477,9 +477,9 @@ export type UpdateFollowMutation = (
 );
 
 export type UpdateProfileMutationVariables = Exact<{
-  id: Scalars['ID'];
   profileName?: Maybe<Scalars['String']>;
   selfIntroduction?: Maybe<Scalars['String']>;
+  googleImageUrl?: Maybe<Scalars['String']>;
   profileImage?: Maybe<Scalars['Upload']>;
   githubUsername?: Maybe<Scalars['String']>;
   twitterUsername?: Maybe<Scalars['String']>;
@@ -667,7 +667,7 @@ export type GetUserQuery = (
       )>> }
     ), relatedUser?: Maybe<(
       { __typename?: 'ProfileNode' }
-      & Pick<ProfileNode, 'id' | 'profileName' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl' | 'followedUsersCount' | 'followingUsersCount'>
+      & Pick<ProfileNode, 'id' | 'profileName' | 'googleImageUrl' | 'selfIntroduction' | 'githubUsername' | 'twitterUsername' | 'websiteUrl' | 'followedUsersCount' | 'followingUsersCount'>
       & { followingUsers: (
         { __typename?: 'UserNodeConnection' }
         & { edges: Array<Maybe<(
@@ -730,8 +730,8 @@ export type CreateProfileMutationHookResult = ReturnType<typeof useCreateProfile
 export type CreateProfileMutationResult = Apollo.MutationResult<CreateProfileMutation>;
 export type CreateProfileMutationOptions = Apollo.BaseMutationOptions<CreateProfileMutation, CreateProfileMutationVariables>;
 export const UpdateFollowDocument = gql`
-    mutation UpdateFollow($id: ID!, $followingUsers: [ID!]) {
-  updateProfile(input: {id: $id, followingUsers: $followingUsers}) {
+    mutation UpdateFollow($followingUsers: [ID!]) {
+  updateProfile(input: {followingUsers: $followingUsers}) {
     profile {
       id
     }
@@ -753,7 +753,6 @@ export type UpdateFollowMutationFn = Apollo.MutationFunction<UpdateFollowMutatio
  * @example
  * const [updateFollowMutation, { data, loading, error }] = useUpdateFollowMutation({
  *   variables: {
- *      id: // value for 'id'
  *      followingUsers: // value for 'followingUsers'
  *   },
  * });
@@ -766,9 +765,9 @@ export type UpdateFollowMutationHookResult = ReturnType<typeof useUpdateFollowMu
 export type UpdateFollowMutationResult = Apollo.MutationResult<UpdateFollowMutation>;
 export type UpdateFollowMutationOptions = Apollo.BaseMutationOptions<UpdateFollowMutation, UpdateFollowMutationVariables>;
 export const UpdateProfileDocument = gql`
-    mutation UpdateProfile($id: ID!, $profileName: String, $selfIntroduction: String, $profileImage: Upload, $githubUsername: String, $twitterUsername: String, $websiteUrl: String) {
+    mutation UpdateProfile($profileName: String, $selfIntroduction: String, $googleImageUrl: String, $profileImage: Upload, $githubUsername: String, $twitterUsername: String, $websiteUrl: String) {
   updateProfile(
-    input: {id: $id, profileName: $profileName, selfIntroduction: $selfIntroduction, profileImage: $profileImage, githubUsername: $githubUsername, twitterUsername: $twitterUsername, websiteUrl: $websiteUrl}
+    input: {profileName: $profileName, selfIntroduction: $selfIntroduction, googleImageUrl: $googleImageUrl, profileImage: $profileImage, githubUsername: $githubUsername, twitterUsername: $twitterUsername, websiteUrl: $websiteUrl}
   ) {
     profile {
       id
@@ -791,9 +790,9 @@ export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutat
  * @example
  * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
  *   variables: {
- *      id: // value for 'id'
  *      profileName: // value for 'profileName'
  *      selfIntroduction: // value for 'selfIntroduction'
+ *      googleImageUrl: // value for 'googleImageUrl'
  *      profileImage: // value for 'profileImage'
  *      githubUsername: // value for 'githubUsername'
  *      twitterUsername: // value for 'twitterUsername'
@@ -1158,6 +1157,7 @@ export const GetUserDocument = gql`
     relatedUser {
       id
       profileName
+      googleImageUrl
       selfIntroduction
       githubUsername
       twitterUsername

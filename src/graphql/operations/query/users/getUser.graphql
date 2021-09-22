@@ -19,6 +19,7 @@ query GetUser($id: ID!) {
     relatedUser {
       id
       profileName
+      googleImageUrl
       selfIntroduction
       githubUsername
       twitterUsername

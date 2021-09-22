@@ -4,6 +4,7 @@ import { userInfoVar } from "src/graphql/apollo/cache";
 import type { GetUserQuery } from "src/graphql/schemas/schema";
 import { useFollow } from "src/pages/users/hooks/useFollow";
 
+// TODO: フォロー部分のみクライアントサイドでfetchする
 export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
   const userInfo = useReactiveVar(userInfoVar);
   const { handleFollow, handleUnFollow, isFollowsLoading } = useFollow();
@@ -29,6 +30,11 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
   return (
     <div>
+      <section>
+        <div>
+          <img src={props?.user?.relatedUser?.googleImageUrl} alt="" />
+        </div>
+      </section>
       <h2>自分以外のユーザー</h2>
       <p>{props?.user?.email}</p>
       <p>{props?.user?.username}</p>

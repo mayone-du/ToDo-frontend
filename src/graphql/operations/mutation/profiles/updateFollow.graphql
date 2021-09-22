@@ -1,5 +1,5 @@
-mutation UpdateFollow($id: ID!, $followingUsers: [ID!]) {
-  updateProfile(input: { id: $id, followingUsers: $followingUsers }) {
+mutation UpdateFollow($followingUsers: [ID!]) {
+  updateProfile(input: { followingUsers: $followingUsers }) {
     profile {
       id
     }
