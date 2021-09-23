@@ -8,8 +8,7 @@ import type {
   GetUserQuery,
   GetUserQueryVariables,
 } from "src/graphql/schemas/schema";
-import { GetUserDocument } from "src/graphql/schemas/schema";
-import { GetAllUsersDocument } from "src/graphql/schemas/schema";
+import { GetAllUsersDocument, GetUserDocument } from "src/graphql/schemas/schema";
 import { Layout } from "src/layouts";
 import { DetailData } from "src/pages/users/components/DetailData";
 import { MyUserInfo } from "src/pages/users/components/MyUserInfo";
@@ -50,7 +49,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 const UserIdPage: CustomNextPage<GetUserQuery | undefined> = (props) => {
   const PAGE_NAME =
-    (props.user?.relatedUser?.profileName ?? props.user?.username ?? "") + "のプロフィール";
+    (props.user?.relatedUser?.profileName || props.user?.username) + "のプロフィール";
 
   const userInfo = useReactiveVar(userInfoVar);
 

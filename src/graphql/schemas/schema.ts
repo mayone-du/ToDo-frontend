@@ -627,6 +627,46 @@ export type GetAllUsersQuery = (
   )> }
 );
 
+export type GetFollowUsersQueryVariables = Exact<{
+  userId: Scalars['ID'];
+}>;
+
+
+export type GetFollowUsersQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'UserNode' }
+    & Pick<UserNode, 'id'>
+    & { followingUsers: (
+      { __typename?: 'ProfileNodeConnection' }
+      & { edges: Array<Maybe<(
+        { __typename?: 'ProfileNodeEdge' }
+        & { node?: Maybe<(
+          { __typename?: 'ProfileNode' }
+          & Pick<ProfileNode, 'profileName'>
+          & { relatedUser: (
+            { __typename?: 'UserNode' }
+            & Pick<UserNode, 'id' | 'email'>
+          ) }
+        )> }
+      )>> }
+    ), relatedUser?: Maybe<(
+      { __typename?: 'ProfileNode' }
+      & Pick<ProfileNode, 'id' | 'followedUsersCount' | 'followingUsersCount'>
+      & { followingUsers: (
+        { __typename?: 'UserNodeConnection' }
+        & { edges: Array<Maybe<(
+          { __typename?: 'UserNodeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'UserNode' }
+            & Pick<UserNode, 'id' | 'email'>
+          )> }
+        )>> }
+      ) }
+    )> }
+  )> }
+);
+
 export type GetMyUserInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1098,6 +1138,65 @@ export function useGetAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>;
 export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>;
 export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>;
+export const GetFollowUsersDocument = gql`
+    query GetFollowUsers($userId: ID!) {
+  user(id: $userId) {
+    id
+    followingUsers {
+      edges {
+        node {
+          profileName
+          relatedUser {
+            id
+            email
+          }
+        }
+      }
+    }
+    relatedUser {
+      id
+      followedUsersCount
+      followingUsersCount
+      followingUsers {
+        edges {
+          node {
+            id
+            email
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFollowUsersQuery__
+ *
+ * To run a query within a React component, call `useGetFollowUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFollowUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFollowUsersQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetFollowUsersQuery(baseOptions: Apollo.QueryHookOptions<GetFollowUsersQuery, GetFollowUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFollowUsersQuery, GetFollowUsersQueryVariables>(GetFollowUsersDocument, options);
+      }
+export function useGetFollowUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFollowUsersQuery, GetFollowUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFollowUsersQuery, GetFollowUsersQueryVariables>(GetFollowUsersDocument, options);
+        }
+export type GetFollowUsersQueryHookResult = ReturnType<typeof useGetFollowUsersQuery>;
+export type GetFollowUsersLazyQueryHookResult = ReturnType<typeof useGetFollowUsersLazyQuery>;
+export type GetFollowUsersQueryResult = Apollo.QueryResult<GetFollowUsersQuery, GetFollowUsersQueryVariables>;
 export const GetMyUserInfoDocument = gql`
     query GetMyUserInfo {
   myUserInfo {

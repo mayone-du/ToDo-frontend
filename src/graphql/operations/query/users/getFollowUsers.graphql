@@ -1,0 +1,29 @@
+query GetFollowUsers($userId: ID!) {
+  user(id: $userId) {
+    id
+    followingUsers {
+      edges {
+        node {
+          profileName
+          relatedUser {
+            id
+            email
+          }
+        }
+      }
+    }
+    relatedUser {
+      id
+      followedUsersCount
+      followingUsersCount
+      followingUsers {
+        edges {
+          node {
+            id
+            email
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,15 +2,19 @@ import { useReactiveVar } from "@apollo/client";
 import { useCallback } from "react";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import type { GetUserQuery } from "src/graphql/schemas/schema";
+import { useGetFollowUsersQuery } from "src/graphql/schemas/schema";
 import { useFollow } from "src/pages/users/hooks/useFollow";
 
-// TODO: フォロー部分のみクライアントサイドでfetchする
 export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
   const userInfo = useReactiveVar(userInfoVar);
   const { handleFollow, handleUnFollow, isFollowsLoading } = useFollow();
+
+  // フォロー関係のみクライアントサイドで取得
+  const { data } = useGetFollowUsersQuery({ variables: { userId: props?.user?.id ?? "" } });
+
   // 自分が対象のユーザー（現在のページのユーザー）をフォローしているかどうか
   const isFollowing =
-    props?.user?.followingUsers.edges
+    data?.user?.followingUsers.edges
       .map((user) => {
         return user?.node?.relatedUser.id === userInfo.userId;
       })
@@ -18,7 +22,7 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
   // フォローするボタンを押した時
   const handleClickFollow = useCallback(async () => {
-    await handleFollow(props?.user?.id ?? "");
+    await handleFollow(props?.user?.id || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -44,9 +48,9 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
 
       <div>
         <h2 className="py-4 text-3xl font-bold text-center">フォローしているユーザー</h2>
-        <p>フォロー数：{props?.user?.relatedUser?.followingUsersCount?.toString()}</p>
+        <p>フォロー数：{data?.user?.relatedUser?.followingUsersCount?.toString()}</p>
         <ul className="border border-red-400">
-          {props?.user?.relatedUser?.followingUsers.edges.map((user, index) => {
+          {data?.user?.relatedUser?.followingUsers.edges.map((user, index) => {
             return (
               <li className="border-b" key={index.toString()}>
                 {user?.node?.id}
@@ -58,9 +62,9 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
         </ul>
 
         <h2 className="py-4 text-3xl font-bold text-center">フォローされているユーザー</h2>
-        <p>フォロワー数：{props?.user?.relatedUser?.followedUsersCount?.toString()}</p>
+        <p>フォロワー数：{data?.user?.relatedUser?.followedUsersCount?.toString()}</p>
         <ul className="border border-blue-400">
-          {props?.user?.followingUsers.edges.map((user, index) => {
+          {data?.user?.followingUsers.edges.map((user, index) => {
             return (
               <li className="border-b" key={index.toString()}>
                 {user?.node?.profileName}
@@ -75,7 +79,7 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
       <div>
         {/* このページのユーザーが、自分のことをフォローしているか */}
         <p>
-          {props?.user?.relatedUser?.followingUsers.edges
+          {data?.user?.relatedUser?.followingUsers.edges
             .map((user) => {
               return user?.node?.id === userInfo.userId;
             })
@@ -103,6 +107,12 @@ export const DetailData: React.VFC<GetUserQuery | undefined> = (props) => {
             フォローする
           </button>
         )}
+      </div>
+
+      <div>
+        {data?.user?.relatedUser?.followedUsersCount?.toString()}
+        <br />
+        {data?.user?.relatedUser?.followingUsersCount?.toString()}
       </div>
     </div>
   );

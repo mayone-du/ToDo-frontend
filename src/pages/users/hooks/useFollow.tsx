@@ -2,7 +2,11 @@ import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { userInfoVar } from "src/graphql/apollo/cache";
-import { useGetUserLazyQuery, useUpdateFollowMutation } from "src/graphql/schemas/schema";
+import {
+  GetFollowUsersDocument,
+  useGetUserLazyQuery,
+  useUpdateFollowMutation,
+} from "src/graphql/schemas/schema";
 import { useAuthModal } from "src/libs/hooks/useAuthModal";
 
 export const useFollow = () => {
@@ -38,6 +42,7 @@ export const useFollow = () => {
         variables: {
           followingUsers: followingUserIds,
         },
+        refetchQueries: [{ query: GetFollowUsersDocument, variables: { userId: targetUserId } }],
       });
       if (error || errors) {
         throw error || errors;
@@ -64,6 +69,7 @@ export const useFollow = () => {
         variables: {
           followingUsers: deletedUserIds,
         },
+        refetchQueries: [{ query: GetFollowUsersDocument, variables: { userId: targetUserId } }],
       });
       if (error || errors) {
         throw error || errors;
