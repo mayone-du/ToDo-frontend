@@ -1,12 +1,17 @@
+import { useReactiveVar } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { userInfoVar } from "src/graphql/apollo/cache";
 import { GetMyAllTasksDocument, useCreateTaskMutation } from "src/graphql/schemas/schema";
+import { useAuthModal } from "src/libs/hooks/useAuthModal";
 
 type TaskInputs = {
   taskTitle: string;
 };
 
 export const CreateForm: React.VFC = () => {
+  const userInfo = useReactiveVar(userInfoVar);
+  const { handleOpenModal } = useAuthModal();
   const [createTaskMutation, { loading: isLoading }] = useCreateTaskMutation();
 
   const {
@@ -18,6 +23,9 @@ export const CreateForm: React.VFC = () => {
 
   // タスクの作成用関数
   const handleCreateTask = async (formData: TaskInputs) => {
+    if (!userInfo.isLogin) {
+      return handleOpenModal();
+    }
     const toastId = toast.loading("loading");
     try {
       // タスクを作成したらタスクの一覧を再取得

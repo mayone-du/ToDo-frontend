@@ -3,7 +3,6 @@ import type { CustomNextPage } from "next";
 import { NextSeo } from "next-seo";
 import { useEffect } from "react";
 import { Error } from "src/components/Error";
-import { NotAuth } from "src/components/NotAuth";
 import { UserLoading } from "src/components/UserLoading";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { useGetMyAllTasksLazyQuery } from "src/graphql/schemas/schema";
@@ -33,9 +32,6 @@ const TasksIndexPage: CustomNextPage = () => {
       ) : isDataLoading ? (
         // タスクの読込中
         <ListLoading />
-      ) : !userInfo.isLoading && !userInfo.isLogin ? (
-        // 非ログイン時（sessionのローディングが終わった時に、sessionがない場合）
-        <NotAuth />
       ) : error ? (
         // エラー
         <Error error={error} />
