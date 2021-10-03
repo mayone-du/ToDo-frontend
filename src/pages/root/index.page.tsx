@@ -1,6 +1,6 @@
 import { useReactiveVar } from "@apollo/client";
 import type { CustomNextPage } from "next";
-import { signOut } from "next-auth/client";
+// import { signOut } from "next-auth/client";
 import { BreadcrumbJsonLd, NextSeo } from "next-seo";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
@@ -8,6 +8,7 @@ import { NotAuth } from "src/components/NotAuth";
 import { UserLoading } from "src/components/UserLoading";
 import { userInfoVar } from "src/graphql/apollo/cache";
 import { Layout } from "src/layouts";
+import { add_one } from "src/wasm/wasm_bg.wasm";
 
 const IndexPage: CustomNextPage = () => {
   const PAGE_NAME = "トップページ";
@@ -42,12 +43,15 @@ const IndexPage: CustomNextPage = () => {
           <button className="block p-4 mx-auto rounded-md border" onClick={handleClick}>
             ボタン
           </button>
+
+          <div className="p-4 text-xl text-center bg-purple-400">{add_one(1)}</div>
         </div>
       )}
       {/* eslint-disable-next-line react/jsx-handler-names */}
-      <button onClick={signOut} className="p-2 border">
+      {/* <button onClick={signOut} className="p-2 border">
         signout
       </button>
+ */}
     </>
   );
 };
